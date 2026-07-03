@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAMI DZ — Dashboard de uso mayo 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --surface-0: #f4f3ef;
+    --surface-1: #f9f8f6;
+    --surface-2: #ffffff;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --border: rgba(11,11,11,0.10);
+    --border-strong: rgba(11,11,11,0.18);
+    --radius: 8px;
+    --bg-danger: #fcebeb; --text-danger: #a32d2d; --border-danger: #f09595;
+    --bg-warning: #faeeda; --text-warning: #854f0b; --border-warning: #ef9f27;
+    --bg-success: #eaf3de; --text-success: #3b6d11; --border-success: #97c459;
+    --bg-accent: #e6f1fb; --text-accent: #185fa5; --border-accent: #85b7eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-0: #111110; --surface-1: #1a1a19; --surface-2: #242422;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #898781;
+      --border: rgba(255,255,255,0.10); --border-strong: rgba(255,255,255,0.18);
+      --bg-danger: #501313; --text-danger: #f09595; --border-danger: #a32d2d;
+      --bg-warning: #412402; --text-warning: #fac775; --border-warning: #854f0b;
+      --bg-success: #173404; --text-success: #c0dd97; --border-success: #3b6d11;
+      --bg-accent: #042c53; --text-accent: #b5d4f4; --border-accent: #185fa5;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--surface-0); color: var(--text-primary); padding: 2rem 1.5rem; min-height: 100vh; }
+  .page-header { margin-bottom: 2rem; }
+  .page-header h1 { font-size: 20px; font-weight: 500; color: var(--text-primary); }
+  .page-header p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .badge-header { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; background: var(--bg-accent); color: var(--text-accent); margin-bottom: 8px; }
+  .stitle { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin: 1.75rem 0 .75rem; }
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media(max-width:700px){ .kpi-row{ grid-template-columns: 1fr 1fr; } }
+  .kpi { background: var(--surface-1); border-radius: var(--radius); padding: 1rem 1.25rem; }
+  .kpi-lbl { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .kpi-val { font-size: 26px; font-weight: 500; line-height: 1.1; }
+  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .blue{color:#2a78d6}.green{color:#1baf7a}.amber{color:#eda100}.red{color:#e34948}.purple{color:#4a3aa7}
+  .nav { display: flex; gap: 6px; margin: 1.75rem 0 1.25rem; flex-wrap: wrap; border-bottom: .5px solid var(--border); padding-bottom: 1rem; }
+  .ntab { font-size: 12px; padding: 5px 14px; border-radius: var(--radius); border: .5px solid var(--border-strong); background: transparent; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
+  .ntab:hover { background: var(--surface-1); }
+  .ntab.active { background: var(--bg-accent); color: var(--text-accent); border-color: var(--border-accent); }
+  .sec { display: none; } .sec.active { display: block; }
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media(max-width:700px){ .g2,.g3{ grid-template-columns:1fr; } }
+  .card { background: var(--surface-1); border-radius: 12px; padding: 1.25rem; }
+  .card h3 { font-size: 13px; font-weight: 500; color: var(--text-secondary); margin: 0 0 1rem; }
+  .hrow { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .hlbl { font-size: 11px; color: var(--text-secondary); width: 200px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .htrk { flex: 1; height: 18px; background: var(--surface-0); border-radius: 4px; overflow: hidden; }
+  .hfill { height: 100%; border-radius: 4px; }
+  .hval { font-size: 11px; color: var(--text-muted); width: 42px; text-align: right; flex-shrink: 0; }
+  .frow { margin-bottom: 10px; }
+  .flbl { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 3px; }
+  .ftrk { height: 22px; background: var(--surface-0); border-radius: 4px; overflow: hidden; }
+  .ffill { height: 100%; border-radius: 4px; }
+  .irow { font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between; padding: 4px 0; border-bottom: .5px solid var(--border); }
+  .irow:last-child { border-bottom: none; }
+  .irow b { color: var(--text-primary); font-weight: 500; }
+  .alert-box { border-radius: var(--radius); padding: .75rem 1rem; margin-top: 16px; font-size: 13px; display: flex; gap: 8px; align-items: flex-start; }
+  .alert-box.danger { background: var(--bg-danger); color: var(--text-danger); border: .5px solid var(--border-danger); }
+  .alert-box.warn { background: var(--bg-warning); color: var(--text-warning); border: .5px solid var(--border-warning); }
+  .sub-nav { display: flex; gap: 4px; margin-bottom: 1rem; }
+  .stab { font-size: 11px; padding: 3px 10px; border-radius: var(--radius); border: .5px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .stab.active { background: var(--surface-0); color: var(--text-primary); border-color: var(--border-strong); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { text-align: left; font-size: 11px; font-weight: 500; color: var(--text-muted); padding: 6px 10px; border-bottom: .5px solid var(--border-strong); white-space: nowrap; }
+  thead th.r { text-align: right; }
+  tbody tr { border-bottom: .5px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-0); }
+  td { padding: 8px 10px; color: var(--text-secondary); vertical-align: middle; }
+  td.name { color: var(--text-primary); font-weight: 500; max-width: 190px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  td.r { text-align: right; }
+  .rank { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 500; background: var(--surface-0); color: var(--text-muted); }
+  .rank.gold { background: #fdf3d0; color: #92650a; }
+  .rank.silver { background: #f0f0ee; color: #5a5a58; }
+  .rank.bronze { background: #fdf0e6; color: #924a0a; }
+  .pill { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+  .pill.hi { background: var(--bg-danger); color: var(--text-danger); }
+  .pill.mid { background: var(--bg-warning); color: var(--text-warning); }
+  .pill.lo { background: var(--bg-success); color: var(--text-success); }
+  .pill.none { background: var(--surface-0); color: var(--text-muted); }
+  .bar-wrap { display: flex; align-items: center; gap: 5px; justify-content: flex-end; }
+  .mini-bar { height: 8px; border-radius: 3px; min-width: 3px; }
+  .note { font-size: 11px; color: var(--text-muted); margin-top: 1rem; padding-top: .75rem; border-top: .5px solid var(--border); line-height: 1.6; }
+  .footer { margin-top: 3rem; padding-top: 1rem; border-top: .5px solid var(--border); font-size: 11px; color: var(--text-muted); text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <span class="badge-header">ELEDÉ / Línea Directa</span>
+  <h1>CAMI DZ — Dashboard de uso</h1>
+  <p>Canal WhatsApp Directoras de Zona &nbsp;·&nbsp; Período: 1 mayo – 1 junio 2026 &nbsp;·&nbsp; 7.563 sesiones analizadas</p>
+</div>
+
+<p class="stitle" style="margin-top:0">Visión general</p>
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-lbl">Total sesiones</div><div class="kpi-val blue">7.563</div><div class="kpi-sub">1 may – 1 jun 2026</div></div>
+  <div class="kpi"><div class="kpi-lbl">DZ únicas</div><div class="kpi-val">445</div><div class="kpi-sub">Promedio 17 ses/DZ</div></div>
+  <div class="kpi"><div class="kpi-lbl">Escalaciones a UEC</div><div class="kpi-val red">5.413</div><div class="kpi-sub">71.6% de todas las sesiones</div></div>
+  <div class="kpi"><div class="kpi-lbl">Autogestión bot</div><div class="kpi-val green">285</div><div class="kpi-sub">3.8% sin escalar</div></div>
+</div>
+<div class="kpi-row" style="margin-top:10px">
+  <div class="kpi"><div class="kpi-lbl">UEC conectó con DZ</div><div class="kpi-val amber">5.167</div><div class="kpi-sub">246 fuera de horario</div></div>
+  <div class="kpi"><div class="kpi-lbl">Avg msgs / sesión</div><div class="kpi-val">25.7</div><div class="kpi-sub">Max: 1.418 mensajes</div></div>
+  <div class="kpi"><div class="kpi-lbl">Aliados UEC activos</div><div class="kpi-val purple">15+</div><div class="kpi-sub">Laura lidera: 303 ses</div></div>
+  <div class="kpi"><div class="kpi-lbl">DZ recurrentes 10+</div><div class="kpi-val">251</div><div class="kpi-sub">56% de la base</div></div>
+</div>
+
+<div class="nav">
+  <button class="ntab active" onclick="showTab('uec',this)"><i class="ti ti-users"></i> Análisis UEC</button>
+  <button class="ntab" onclick="showTab('ranking',this)"><i class="ti ti-trophy"></i> Ranking DZ</button>
+  <button class="ntab" onclick="showTab('autobot',this)"><i class="ti ti-robot"></i> Autogestión bot</button>
+  <button class="ntab" onclick="showTab('actividad',this)"><i class="ti ti-chart-bar"></i> Actividad</button>
+</div>
+
+<!-- TAB UEC -->
+<div id="uec" class="sec active">
+  <div class="g2">
+    <div class="card">
+      <h3>Temas tratados con Aliado UEC (sesiones)</h3>
+      <div class="hrow"><div class="hlbl">Inscripción / activación asesora</div><div class="htrk"><div class="hfill" style="width:100%;background:#2a78d6"></div></div><div class="hval">1.870</div></div>
+      <div class="hrow"><div class="hlbl">Novedad pedido / despacho</div><div class="htrk"><div class="hfill" style="width:92%;background:#4a3aa7"></div></div><div class="hval">1.730</div></div>
+      <div class="hrow"><div class="hlbl">Conversación general</div><div class="htrk"><div class="hfill" style="width:82%;background:#888"></div></div><div class="hval">1.532</div></div>
+      <div class="hrow"><div class="hlbl">Saldo / cupo / pago</div><div class="htrk"><div class="hfill" style="width:43%;background:#eda100"></div></div><div class="hval">799</div></div>
+      <div class="hrow"><div class="hlbl">Precintos / CyD</div><div class="htrk"><div class="hfill" style="width:31%;background:#1baf7a"></div></div><div class="hval">583</div></div>
+      <div class="hrow"><div class="hlbl">Desbloqueo asesora</div><div class="htrk"><div class="hfill" style="width:30%;background:#e34948"></div></div><div class="hval">567</div></div>
+      <div class="hrow"><div class="hlbl">Premio no recibido</div><div class="htrk"><div class="hfill" style="width:24%;background:#e87ba4"></div></div><div class="hval">448</div></div>
+      <div class="hrow"><div class="hlbl">Anular / cancelar proceso</div><div class="htrk"><div class="hfill" style="width:14%;background:#eb6834"></div></div><div class="hval">263</div></div>
+      <div class="hrow"><div class="hlbl">Pedido no recibido</div><div class="htrk"><div class="hfill" style="width:13%;background:#4a3aa7"></div></div><div class="hval">235</div></div>
+      <div class="hrow"><div class="hlbl">Clave / acceso plataforma</div><div class="htrk"><div class="hfill" style="width:4%;background:#eda100"></div></div><div class="hval">71</div></div>
+      <div class="hrow"><div class="hlbl">Producto averiado</div><div class="htrk"><div class="hfill" style="width:4%;background:#e34948"></div></div><div class="hval">68</div></div>
+    </div>
+    <div class="card">
+      <h3>Distribución temas UEC</h3>
+      <div style="position:relative;height:280px"><canvas id="uecPie" role="img" aria-label="Distribución temas UEC"></canvas></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Carga por Aliado UEC</h3>
+      <div class="hrow"><div class="hlbl">Laura</div><div class="htrk"><div class="hfill" style="width:100%;background:#2a78d6"></div></div><div class="hval">303</div></div>
+      <div class="hrow"><div class="hlbl">Isabel</div><div class="htrk"><div class="hfill" style="width:93%;background:#2a78d6"></div></div><div class="hval">282</div></div>
+      <div class="hrow"><div class="hlbl">Johana</div><div class="htrk"><div class="hfill" style="width:74%;background:#4a3aa7"></div></div><div class="hval">225</div></div>
+      <div class="hrow"><div class="hlbl">Wendy</div><div class="htrk"><div class="hfill" style="width:63%;background:#4a3aa7"></div></div><div class="hval">191</div></div>
+      <div class="hrow"><div class="hlbl">Elizabeth</div><div class="htrk"><div class="hfill" style="width:59%;background:#1baf7a"></div></div><div class="hval">178</div></div>
+      <div class="hrow"><div class="hlbl">Carolina</div><div class="htrk"><div class="hfill" style="width:58%;background:#1baf7a"></div></div><div class="hval">176</div></div>
+      <div class="hrow"><div class="hlbl">Jose</div><div class="htrk"><div class="hfill" style="width:58%;background:#1baf7a"></div></div><div class="hval">176</div></div>
+      <div class="hrow"><div class="hlbl">Paola</div><div class="htrk"><div class="hfill" style="width:56%;background:#eda100"></div></div><div class="hval">169</div></div>
+      <div class="hrow"><div class="hlbl">Cristian</div><div class="htrk"><div class="hfill" style="width:55%;background:#eda100"></div></div><div class="hval">168</div></div>
+      <div class="hrow"><div class="hlbl">Vanessa</div><div class="htrk"><div class="hfill" style="width:55%;background:#eda100"></div></div><div class="hval">167</div></div>
+      <div class="hrow"><div class="hlbl">Wilmar</div><div class="htrk"><div class="hfill" style="width:54%;background:#888"></div></div><div class="hval">163</div></div>
+      <div class="hrow"><div class="hlbl">Andrea</div><div class="htrk"><div class="hfill" style="width:53%;background:#888"></div></div><div class="hval">160</div></div>
+    </div>
+    <div class="card">
+      <h3>Potencial deflexión al agente IA</h3>
+      <div class="irow"><span>Desbloqueo asesora</span><b class="green">567 — automatizable</b></div>
+      <div class="irow"><span>Premio no recibido</span><b class="green">448 — automatizable</b></div>
+      <div class="irow"><span>Pedido no recibido</span><b class="green">235 — automatizable</b></div>
+      <div class="irow"><span>Clave / acceso</span><b class="green">71 — automatizable</b></div>
+      <div class="irow"><span>Producto averiado</span><b class="green">68 — automatizable</b></div>
+      <div class="irow"><span>Saldo / cupo / pago</span><b class="amber">799 — parcial</b></div>
+      <div class="irow"><span>Precintos / CyD</span><b class="amber">583 — parcial</b></div>
+      <div class="irow"><span>Anular proceso</span><b class="amber">263 — parcial</b></div>
+      <div class="irow"><span>Inscripción / activación</span><b class="red">1.870 — requiere humano</b></div>
+      <div class="irow"><span>Novedad pedido</span><b class="red">1.730 — requiere humano</b></div>
+      <p style="font-size:11px;color:var(--text-muted);margin:.75rem 0 0">Deflexión estimada: <b style="color:var(--text-primary)">~2.189 sesiones (42%)</b></p>
+    </div>
+  </div>
+  <div class="alert-box danger">
+    <i class="ti ti-alert-circle" style="font-size:18px;flex-shrink:0;margin-top:1px"></i>
+    <span><b>Hallazgo crítico:</b> el 71.6% de sesiones termina en escalación UEC. Inscripción (36.2%) y novedades de pedido (33.5%) dominan la carga y requieren integración con sistemas internos para ser deflectados por el agente IA.</span>
+  </div>
+  <div class="alert-box warn" style="margin-top:10px">
+    <i class="ti ti-clock" style="font-size:18px;flex-shrink:0;margin-top:1px"></i>
+    <span><b>Demanda fuera de horario:</b> 246 DZ intentaron contactar al Aliado UEC sin éxito. El agente IA puede capturar esa demanda 24/7 y dejar el caso listo para el siguiente día hábil.</span>
+  </div>
+</div>
+
+<!-- TAB RANKING -->
+<div id="ranking" class="sec">
+  <div class="sub-nav">
+    <button class="stab active" onclick="showRank('top10',this)">Top 10 mayor uso</button>
+    <button class="stab" onclick="showRank('bot10',this)">Top 10 menor uso</button>
+  </div>
+  <div id="top10">
+    <div class="card">
+      <h3>DZ con más sesiones — mayo 2026</h3>
+      <table>
+        <thead><tr><th style="width:32px">#</th><th>Nombre DZ</th><th class="r">Sesiones</th><th class="r">Escala UEC</th><th class="r">Txn bot</th><th class="r">Avg msgs</th><th>Perfil</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rank gold">1</span></td><td class="name">dzmonicalopez4103</td><td class="r"><b>86</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:37px;background:#e34948"></div>32 (37%)</div></td><td class="r"><span class="green" style="font-weight:500">18</span></td><td class="r">23.4</td><td><span class="pill mid">UEC + bot</span></td></tr>
+          <tr><td><span class="rank silver">2</span></td><td class="name">pacifika</td><td class="r"><b>75</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:59px;background:#e34948"></div>44 (59%)</div></td><td class="r"><span class="amber" style="font-weight:500">5</span></td><td class="r">20.7</td><td><span class="pill hi">Alta escala</span></td></tr>
+          <tr><td><span class="rank bronze">3</span></td><td class="name">Elede</td><td class="r"><b>61</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:80px;background:#e34948"></div>49 (80%)</div></td><td class="r"><span class="red" style="font-weight:500">1</span></td><td class="r">26.7</td><td><span class="pill hi">Casi solo UEC</span></td></tr>
+          <tr><td><span class="rank">4</span></td><td class="name">Loguin Cartago Andrea Orozco</td><td class="r"><b>52</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:85px;background:#e34948"></div>44 (85%)</div></td><td class="r"><span class="red" style="font-weight:500">1</span></td><td class="r">32.1</td><td><span class="pill hi">Casi solo UEC</span></td></tr>
+          <tr><td><span class="rank">5</span></td><td class="name">Pacifika Zona 2104</td><td class="r"><b>51</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:67px;background:#e34948"></div>34 (67%)</div></td><td class="r"><span class="red" style="font-weight:500">0</span></td><td class="r">20.8</td><td><span class="pill hi">Solo UEC</span></td></tr>
+          <tr><td><span class="rank">6</span></td><td class="name">PCFK 2131 Andrea Cuesta</td><td class="r"><b>48</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:71px;background:#e34948"></div>34 (71%)</div></td><td class="r"><span class="green" style="font-weight:500">6</span></td><td class="r">29.2</td><td><span class="pill mid">UEC + bot</span></td></tr>
+          <tr><td><span class="rank">7</span></td><td class="name">Johana Contreras Zona 2123</td><td class="r"><b>48</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:29px;background:#e34948"></div>14 (29%)</div></td><td class="r"><span class="green" style="font-weight:500">1</span></td><td class="r">17.2</td><td><span class="pill lo">Más autónoma</span></td></tr>
+          <tr><td><span class="rank">8</span></td><td class="name">Carmel Neiva Sur Z71</td><td class="r"><b>47</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:91px;background:#e34948"></div>43 (91%)</div></td><td class="r"><span class="red" style="font-weight:500">0</span></td><td class="r">22.3</td><td><span class="pill hi">Solo UEC</span></td></tr>
+          <tr><td><span class="rank">9</span></td><td class="name">Carmel Claudia Sarasty</td><td class="r"><b>46</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:78px;background:#e34948"></div>36 (78%)</div></td><td class="r"><span class="red" style="font-weight:500">1</span></td><td class="r">18.8</td><td><span class="pill hi">Casi solo UEC</span></td></tr>
+          <tr><td><span class="rank">10</span></td><td class="name">Ana Milena Arenas</td><td class="r"><b>45</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:80px;background:#e34948"></div>36 (80%)</div></td><td class="r"><span class="red" style="font-weight:500">0</span></td><td class="r">25.0</td><td><span class="pill hi">Solo UEC</span></td></tr>
+        </tbody>
+      </table>
+      <p class="note"><b>Txn bot</b> = transacciones completadas sin escalar al UEC. Solo 2 de las 10 DZ más activas tienen uso mixto real (bot + UEC). El resto usa CAMI DZ exclusivamente como puerta de entrada al equipo humano.</p>
+    </div>
+  </div>
+  <div id="bot10" style="display:none">
+    <div class="card">
+      <h3>DZ con menor actividad — mayo 2026</h3>
+      <table>
+        <thead><tr><th style="width:32px">#</th><th>Nombre DZ</th><th class="r">Sesiones</th><th class="r">Escala UEC</th><th class="r">Txn bot</th><th class="r">Avg msgs</th><th>Observación</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rank">436</span></td><td class="name">Pacifika2107</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">3.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">437</span></td><td class="name">Carmel norte de Cali y Yumbo</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">2.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">438</span></td><td class="name">Jucastillo</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">10.0</td><td><span class="pill none">Exploración</span></td></tr>
+          <tr><td><span class="rank">439</span></td><td class="name">Daniela Gomez</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">3.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">440</span></td><td class="name">Duban Laverde</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">3.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">441</span></td><td class="name">Clau Sarasty</td><td class="r"><b>1</b></td><td class="r"><span class="green" style="font-weight:500">1</span></td><td class="r">—</td><td class="r">87.0</td><td><span class="pill lo">1 ses larga, completó</span></td></tr>
+          <tr><td><span class="rank">442</span></td><td class="name">José Mosquera</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">44.0</td><td><span class="pill none">1 ses larga sin txn</span></td></tr>
+          <tr><td><span class="rank">443</span></td><td class="name">Fernando Navarro — Analista UEC</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">56.0</td><td><span class="pill mid">Posible acceso interno</span></td></tr>
+          <tr><td><span class="rank">444</span></td><td class="name">22+ A5pgĺoria Patriciaro</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">3.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">445</span></td><td class="name">Creando Moda con el Corazón</td><td class="r"><b>1</b></td><td class="r"><span class="red">1</span></td><td class="r">—</td><td class="r">18.0</td><td><span class="pill none">Solo buscó UEC</span></td></tr>
+        </tbody>
+      </table>
+      <p class="note">Las 32 DZ con una sola sesión son el 7.2% de la base. La mayoría entró, saludó y no volvió. <b>Fernando Navarro (Analista UEC)</b> aparece registrado como usuario DZ — se recomienda excluirlo en futuros análisis para no contaminar métricas.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB AUTOBOT -->
+<div id="autobot" class="sec">
+  <div class="g2">
+    <div class="card">
+      <h3>Funnel de autogestión</h3>
+      <div class="frow"><div class="flbl"><span>Sesiones totales</span><span>7.563</span></div><div class="ftrk"><div class="ffill" style="width:100%;background:#2a78d6"></div></div></div>
+      <div class="frow"><div class="flbl"><span>Llegaron al menú</span><span>961 (13%)</span></div><div class="ftrk"><div class="ffill" style="width:13%;background:#4a3aa7"></div></div></div>
+      <div class="frow"><div class="flbl"><span>Completaron transacción bot</span><span>285 (3.8%)</span></div><div class="ftrk"><div class="ffill" style="width:3.8%;background:#1baf7a"></div></div></div>
+      <div class="frow"><div class="flbl"><span>Escalaron a UEC</span><span>5.413 (71.6%)</span></div><div class="ftrk"><div class="ffill" style="width:71.6%;background:#e34948"></div></div></div>
+      <div class="frow"><div class="flbl"><span>Abandonaron (timeout/core)</span><span>5.371 (71%)</span></div><div class="ftrk"><div class="ffill" style="width:71%;background:#888"></div></div></div>
+    </div>
+    <div class="card">
+      <h3>Transacciones completadas por bot</h3>
+      <div class="irow"><span>Caso Salesforce creado</span><b>189</b></div>
+      <div class="irow"><span>Casos asesora consultados</span><b>30</b></div>
+      <div class="irow"><span>Casos zona consultados</span><b>21</b></div>
+      <div class="irow"><span>Caso específico consultado</span><b>14</b></div>
+      <div class="irow"><span>Bloqueo creado</span><b>14</b></div>
+      <div class="irow"><span>Caso CyD creado</span><b>6</b></div>
+      <div class="irow"><span>Desbloqueo creado</span><b>2</b></div>
+      <div class="irow"><span>Prospecto registrado</span><b>3</b></div>
+      <div class="irow"><span>Atención UEC conectada</span><b>5.167</b></div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <h3>Categorías de casos</h3>
+      <div class="irow"><span>Pedido</span><b>500</b></div>
+      <div class="irow"><span>Premios y puntos</span><b>274</b></div>
+      <div class="irow"><span>CyD no aplicadas</span><b>50</b></div>
+      <div class="irow"><span>Flete e inscripción</span><b>44</b></div>
+      <div class="irow"><span>Pagos</span><b>8</b></div>
+    </div>
+    <div class="card">
+      <h3>Sub-razones pedido</h3>
+      <div class="irow"><span>Facturado no enviado</span><b>341</b></div>
+      <div class="irow"><span>Problemas en la entrega</span><b>69</b></div>
+      <div class="irow"><span>No recibió pedido</span><b>11</b></div>
+    </div>
+    <div class="card">
+      <h3>Motivos bloqueo</h3>
+      <div class="irow"><span>Posible fraude</span><b>51</b></div>
+      <div class="irow"><span>Retiro voluntario</span><b>39</b></div>
+      <div class="irow"><span>Relacionamiento</span><b>13</b></div>
+      <div class="irow"><span>Código fucsia</span><b>7</b></div>
+      <div class="irow"><span>Persona fallecida</span><b>4</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB ACTIVIDAD -->
+<div id="actividad" class="sec">
+  <div class="card" style="margin-top:0">
+    <h3>Sesiones por día — mayo 2026</h3>
+    <div style="position:relative;height:200px"><canvas id="dailyChart" role="img" aria-label="Sesiones diarias mayo 2026"></canvas></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Por hora del día</h3>
+      <div style="position:relative;height:220px"><canvas id="hourChart" role="img" aria-label="Sesiones por hora"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Por día de semana</h3>
+      <div style="position:relative;height:220px"><canvas id="weekChart" role="img" aria-label="Sesiones por día de semana"></canvas></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Frecuencia de uso por DZ</h3>
+      <div class="irow"><span>1 sesión (nuevas / inactivas)</span><b>32 DZ</b></div>
+      <div class="irow"><span>2–5 sesiones</span><b>39 DZ</b></div>
+      <div class="irow"><span>6–10 sesiones</span><b>71 DZ</b></div>
+      <div class="irow"><span>11–20 sesiones</span><b>162 DZ</b></div>
+      <div class="irow"><span>21–50 sesiones</span><b>136 DZ</b></div>
+      <div class="irow"><span>50+ sesiones (power users)</span><b>5 DZ</b></div>
+    </div>
+    <div class="card">
+      <h3>Profundidad de sesión</h3>
+      <div class="irow"><span>Promedio general</span><b>25.7 msgs</b></div>
+      <div class="irow"><span>Promedio sesiones UEC</span><b>23.2 msgs</b></div>
+      <div class="irow"><span>Sesiones con 6+ mensajes</span><b>6.901 (91%)</b></div>
+      <div class="irow"><span>Sesiones con 2–5 mensajes</span><b>661 (9%)</b></div>
+      <div class="irow"><span>Máximo registrado</span><b>1.418 msgs</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  CAMI DZ — Dashboard de uso &nbsp;·&nbsp; ELEDÉ / Línea Directa &nbsp;·&nbsp; Generado a partir de 7.563 sesiones reales (mayo 2026)
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='actividad') initAct();
+}
+
+function showRank(id, btn) {
+  document.getElementById('top10').style.display = id==='top10' ? 'block' : 'none';
+  document.getElementById('bot10').style.display = id==='bot10' ? 'block' : 'none';
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const gridC = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
+const lblC = '#898781';
+const baseOpts = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{ legend:{ display:false } },
+  scales:{ x:{ ticks:{ color:lblC, font:{size:11} }, grid:{color:gridC} }, y:{ ticks:{ color:lblC, font:{size:11} }, grid:{color:gridC} } }
+};
+
+new Chart(document.getElementById('uecPie'), {
+  type:'doughnut',
+  data:{
+    labels:['Inscripción/activación','Novedad pedido','Conversación general','Saldo/cupo','Precintos/CyD','Desbloqueo','Premio no recibido','Anular proceso','Pedido no recibido','Clave/acceso','Prod. averiado'],
+    datasets:[{ data:[1870,1730,1532,799,583,567,448,263,235,71,68], backgroundColor:['#2a78d6','#4a3aa7','#73726c','#eda100','#1baf7a','#e34948','#e87ba4','#eb6834','#5b8dd9','#c49a00','#b02828'], borderWidth:0 }]
+  },
+  options:{ responsive:true, maintainAspectRatio:false, cutout:'55%', plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:(c)=>` ${c.label}: ${c.raw.toLocaleString()} (${Math.round(c.raw/7167*100)}%)` } } } }
+});
+
+let actDone = false;
+function initAct() {
+  if(actDone) return; actDone=true;
+  const days=['1/5','2/5','3/5','4/5','5/5','6/5','7/5','8/5','9/5','10/5','11/5','12/5','13/5','14/5','15/5','16/5','17/5','18/5','19/5','20/5','21/5','22/5','23/5','24/5','25/5','26/5','27/5','28/5','29/5','30/5','31/5'];
+  const dayData=[17,80,7,455,421,380,367,318,86,4,438,358,323,317,255,73,5,14,420,377,367,372,103,2,421,443,391,367,303,62,17];
+  new Chart(document.getElementById('dailyChart'),{ type:'bar', data:{ labels:days, datasets:[{ data:dayData, backgroundColor:'#2a78d6', borderRadius:3, borderSkipped:false }] }, options:{ ...baseOpts, scales:{ x:{ ticks:{ color:lblC, font:{size:9}, maxRotation:45, autoSkip:false }, grid:{display:false} }, y:{ ticks:{ color:lblC, font:{size:11} }, grid:{color:gridC} } } } });
+  new Chart(document.getElementById('hourChart'),{ type:'bar', data:{ labels:['6h','7h','8h','9h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h+'], datasets:[{ data:[30,473,992,1008,910,802,498,370,660,745,636,208,90,122], backgroundColor:'#4a3aa7', borderRadius:3, borderSkipped:false }] }, options:baseOpts });
+  new Chart(document.getElementById('weekChart'),{ type:'bar', data:{ labels:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'], datasets:[{ data:[1328,1642,1471,1418,1265,404,35], backgroundColor:['#2a78d6','#2a78d6','#2a78d6','#2a78d6','#2a78d6','#eda100','#e34948'], borderRadius:3, borderSkipped:false }] }, options:{ ...baseOpts, scales:{ x:{ ticks:{color:lblC,font:{size:11}}, grid:{display:false} }, y:{ ticks:{color:lblC,font:{size:11}}, grid:{color:gridC} } } } });
+}
+</script>
+</body>
+</html>
