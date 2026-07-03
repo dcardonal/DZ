@@ -243,6 +243,22 @@
 
 <!-- TAB AUTOBOT -->
 <div id="autobot" class="sec">
+  <div class="g2" style="margin-top:0;margin-bottom:16px">
+    <div class="card">
+      <h3>Uso por opción del menú principal (sesiones únicas)</h3>
+      <div class="hrow"><div class="hlbl">Aliado UEC</div><div class="htrk"><div class="hfill" style="width:100%;background:#e34948"></div></div><div class="hval">5.425</div></div>
+      <div class="hrow"><div class="hlbl">Gestión de casos</div><div class="htrk"><div class="hfill" style="width:21%;background:#2a78d6"></div></div><div class="hval">1.143</div></div>
+      <div class="hrow"><div class="hlbl">Bloqueos</div><div class="htrk"><div class="hfill" style="width:3%;background:#4a3aa7"></div></div><div class="hval">148</div></div>
+      <div class="hrow"><div class="hlbl">Consultar asesoras</div><div class="htrk"><div class="hfill" style="width:3%;background:#1baf7a"></div></div><div class="hval">142</div></div>
+      <div class="hrow"><div class="hlbl">Desbloqueos</div><div class="htrk"><div class="hfill" style="width:2%;background:#eda100"></div></div><div class="hval">121</div></div>
+      <div class="hrow"><div class="hlbl">Gestión directora</div><div class="htrk"><div class="hfill" style="width:2%;background:#eb6834"></div></div><div class="hval">90</div></div>
+      <div class="hrow"><div class="hlbl">Estado inscripción</div><div class="htrk"><div class="hfill" style="width:1%;background:#888"></div></div><div class="hval">61</div></div>
+    </div>
+    <div class="card">
+      <h3>Distribución del menú principal</h3>
+      <div style="position:relative;height:240px"><canvas id="menuPie" role="img" aria-label="Distribución uso menú principal"></canvas></div>
+    </div>
+  </div>
   <div class="g2">
     <div class="card">
       <h3>Funnel de autogestión</h3>
@@ -364,6 +380,15 @@ new Chart(document.getElementById('uecPie'), {
     datasets:[{ data:[1870,1730,1532,799,583,567,448,263,235,71,68], backgroundColor:['#2a78d6','#4a3aa7','#73726c','#eda100','#1baf7a','#e34948','#e87ba4','#eb6834','#5b8dd9','#c49a00','#b02828'], borderWidth:0 }]
   },
   options:{ responsive:true, maintainAspectRatio:false, cutout:'55%', plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:(c)=>` ${c.label}: ${c.raw.toLocaleString()} (${Math.round(c.raw/7167*100)}%)` } } } }
+});
+
+new Chart(document.getElementById('menuPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Aliado UEC', 'Gestión de casos', 'Bloqueos', 'Consultar asesoras', 'Desbloqueos', 'Gestión directora', 'Estado inscripción'],
+    datasets: [{ data: [5425, 1143, 148, 142, 121, 90, 61], backgroundColor: ['#e34948','#2a78d6','#4a3aa7','#1baf7a','#eda100','#eb6834','#888'], borderWidth: 0 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ${c.label}: ${c.raw.toLocaleString()} (${Math.round(c.raw/7130*100)}%)` } } } }
 });
 
 let actDone = false;
