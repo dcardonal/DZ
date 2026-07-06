@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f6f8fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CAMI Informe">
+<title>CAMI · Informe Ejecutivo Completo · Abr–Jun 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap');
+:root{
+  --bg:#f6f8fb;--s1:#ffffff;--s2:#f1f4f9;--s3:#e8edf5;--border:#e3e8f0;
+  --blue:#4f8ef7;--pink:#f472b6;--teal:#2dd4bf;--amber:#fbbf24;
+  --purple:#a78bfa;--orange:#fb923c;--red:#f87171;--green:#34d399;
+  --cami:#1ec4d0;
+  --text:#1e2a3d;--muted:#64748b;--dim:#c3ccdb;--r:14px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── NAV ── */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(15,30,60,.04);z-index:200;gap:10px;flex-wrap:wrap;}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--cami),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
+.nav-tabs{display:flex;gap:2px;background:var(--s2);padding:3px;border-radius:10px;border:1px solid var(--border);flex-wrap:wrap;}
+.tab-btn{padding:5px 10px;border-radius:7px;font-size:0.68rem;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;}
+.tab-btn.active{background:var(--cami);color:#fff;}
+.tab-btn:hover:not(.active){background:var(--s3);color:var(--text);}
+.nav-right{display:flex;gap:6px;align-items:center;}
+.mfilter{display:flex;gap:5px;align-items:center;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:3px 6px;}
+.mfilter-lbl{font-size:.58rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding-left:4px;}
+.mchip{font-size:0.62rem;padding:3px 10px;border-radius:20px;font-weight:700;cursor:pointer;border:1px solid transparent;transition:all .15s;user-select:none;}
+.mchip.abr{background:rgba(167,139,250,.16);color:var(--purple);border-color:rgba(167,139,250,.3);}
+.mchip.may{background:rgba(79,142,247,.16);color:var(--blue);border-color:rgba(79,142,247,.3);}
+.mchip.jun{background:rgba(52,211,153,.16);color:var(--green);border-color:rgba(52,211,153,.3);}
+.mchip.off{background:transparent;color:#a8b3c5;border-color:var(--border);text-decoration:line-through;}
+
+/* ── PAGES ── */
+.page{display:none;padding:22px 24px;max-width:1440px;margin:0 auto;}
+.page.active{display:block;}
+
+/* ── TYPOGRAPHY ── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:6px;}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);display:flex;align-items:center;gap:7px;}
+.sec-title::before{content:'';display:inline-block;width:14px;height:2px;background:var(--cami);border-radius:2px;}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;gap:10px;margin-bottom:14px;}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(15,30,60,.04);}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi.cami::after{background:var(--cami);}
+.kpi.blue::after{background:var(--blue);}.kpi.pink::after{background:var(--pink);}
+.kpi.teal::after{background:var(--teal);}.kpi.amber::after{background:var(--amber);}
+.kpi.purple::after{background:var(--purple);}.kpi.orange::after{background:var(--orange);}
+.kpi.red::after{background:var(--red);}.kpi.green::after{background:var(--green);}
+.kpi-lbl{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:5px;}
+.kpi-val{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;line-height:1;margin-bottom:3px;}
+.kpi.cami .kpi-val{color:var(--cami);}
+.kpi.blue .kpi-val{color:var(--blue);}.kpi.pink .kpi-val{color:var(--pink);}
+.kpi.teal .kpi-val{color:var(--teal);}.kpi.amber .kpi-val{color:var(--amber);}
+.kpi.purple .kpi-val{color:var(--purple);}.kpi.orange .kpi-val{color:var(--orange);}
+.kpi.red .kpi-val{color:var(--red);}.kpi.green .kpi-val{color:var(--green);}
+.kpi-sub{font-size:0.62rem;color:var(--muted);}
+.kpi-badge{display:inline-block;font-size:0.56rem;font-weight:700;padding:2px 6px;border-radius:12px;margin-top:4px;}
+.badge-up{background:rgba(52,211,153,.15);color:var(--green);}
+.badge-down{background:rgba(248,113,113,.15);color:var(--red);}
+.badge-warn{background:rgba(251,191,36,.15);color:var(--amber);}
+.badge-info{background:rgba(79,142,247,.15);color:var(--blue);}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.g31{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px;}
+.g13{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:12px;}
+.g32{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px;}
+
+/* ── CARD ── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:0 1px 3px rgba(15,30,60,.04);}
+.card-hd{font-size:0.76rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px;}
+.chip{font-size:0.58rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;}
+.chip-good{background:rgba(52,211,153,.12);color:var(--green);}
+.chip-bad{background:rgba(248,113,113,.12);color:var(--red);}
+.chip-warn{background:rgba(251,191,36,.12);color:var(--amber);}
+.chip-info{background:rgba(79,142,247,.12);color:var(--blue);}
+.chip-cami{background:rgba(30,196,208,.12);color:var(--cami);}
+
+/* ── INSIGHT ── */
+.insight{display:flex;gap:9px;padding:10px 11px;border-radius:9px;margin-bottom:8px;font-size:0.74rem;line-height:1.6;}
+.insight:last-child{margin-bottom:0;}
+.insight-icon{font-size:.9rem;flex-shrink:0;margin-top:1px;}
+.insight-title{font-weight:600;margin-bottom:1px;}
+.insight.red{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.18);}
+.insight.amber{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.18);}
+.insight.green{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.18);}
+.insight.blue{background:rgba(79,142,247,.07);border:1px solid rgba(79,142,247,.18);}
+.insight.purple{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.18);}
+.insight.teal{background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.18);}
+.insight.orange{background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.18);}
+.insight.red .insight-title{color:var(--red);}
+.insight.amber .insight-title{color:var(--amber);}
+.insight.green .insight-title{color:var(--green);}
+.insight.blue .insight-title{color:var(--blue);}
+.insight.purple .insight-title{color:var(--purple);}
+.insight.teal .insight-title{color:var(--teal);}
+.insight.orange .insight-title{color:var(--orange);}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:0.59rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;padding:6px 9px;text-align:left;border-bottom:1px solid var(--border);}
+.tbl td{font-size:0.72rem;padding:7px 9px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(30,60,120,.03);}
+.pill{display:inline-block;font-size:0.58rem;font-weight:700;padding:2px 7px;border-radius:20px;}
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:0.76rem;}
+.metric-row:last-child{border-bottom:none;}
+.metric-val{font-weight:700;font-family:'Space Grotesk',sans-serif;}
+.legend-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:0.74rem;border-bottom:1px solid var(--border);}
+.legend-row:last-child{border-bottom:none;}
+.legend-dot{width:7px;height:7px;border-radius:50%;margin-right:6px;flex-shrink:0;display:inline-block;}
+.legend-pct{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.78rem;}
+
+/* ── COMPARE ── */
+.cmp-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;}
+.cmp-header{display:flex;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.cmp-months{display:flex;gap:6px;}
+.cmp-month{font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:20px;}
+.cmp-month.abr{background:rgba(167,139,250,.15);color:var(--purple);}
+.cmp-month.may{background:rgba(79,142,247,.15);color:var(--blue);}
+.cmp-month.jun{background:rgba(52,211,153,.15);color:var(--green);}
+.cmp-row{display:grid;grid-template-columns:180px 1fr 1fr 1fr 92px;align-items:center;padding:8px 16px;border-bottom:1px solid var(--border);gap:10px;}
+.cmp-row.hidden-abr .col-abr,.cmp-row.hidden-may .col-may,.cmp-row.hidden-jun .col-jun{opacity:.12;}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-row:hover{background:rgba(30,60,120,.03);}
+.cmp-metric{font-size:0.72rem;font-weight:500;color:var(--muted);}
+.cmp-bar-wrap{display:flex;align-items:center;gap:7px;transition:opacity .2s;}
+.cmp-bar{height:6px;border-radius:4px;min-width:3px;}
+.cmp-num{font-size:0.72rem;font-weight:700;font-family:'Space Grotesk',sans-serif;white-space:nowrap;}
+.cmp-delta{font-size:0.66rem;font-weight:700;text-align:center;padding:2px 7px;border-radius:20px;}
+.delta-up{background:rgba(52,211,153,.12);color:var(--green);}
+.delta-down{background:rgba(248,113,113,.12);color:var(--red);}
+.delta-neut{background:rgba(100,116,139,.12);color:#94a3b8;}
+
+/* ── SEGMENT ── */
+.seg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.seg-card{border-radius:var(--r);padding:14px;border:1px solid;position:relative;overflow:hidden;}
+.seg-num{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:3px;}
+.seg-pct{font-size:0.7rem;font-weight:700;margin-bottom:5px;}
+.seg-name{font-size:0.78rem;font-weight:600;margin-bottom:5px;}
+.seg-meta{font-size:0.66rem;color:var(--muted);line-height:1.55;}
+.seg-tag{display:inline-block;font-size:0.56rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:6px;}
+
+/* ── FUNNEL ── */
+.funnel-step{display:flex;align-items:center;gap:9px;margin-bottom:8px;}
+.funnel-bar-wrap{flex:1;background:var(--s3);border-radius:6px;height:32px;overflow:hidden;}
+.funnel-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:0.7rem;font-weight:600;}
+.funnel-label{width:150px;font-size:0.73rem;font-weight:500;}
+.funnel-meta{width:75px;text-align:right;font-size:0.68rem;color:var(--muted);}
+.funnel-drop{font-size:0.6rem;color:var(--red);font-weight:600;}
+
+/* ── MEJORA ── */
+.mejora-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.mejora-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:14px;position:relative;}
+.mejora-num{position:absolute;top:8px;right:12px;font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:800;color:#dbe2ee;line-height:1;}
+.mejora-cat{font-size:0.59rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.mejora-title{font-size:0.8rem;font-weight:700;margin-bottom:6px;color:var(--text);padding-right:32px;}
+.mejora-body{font-size:0.71rem;color:var(--muted);line-height:1.6;}
+.mejora-impact{margin-top:8px;font-size:0.6rem;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block;}
+
+/* ── JOURNEY ── */
+.journey{display:flex;align-items:center;gap:0;overflow-x:auto;padding:4px 0;margin-bottom:10px;}
+.j-step{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:0.68rem;text-align:center;min-width:105px;flex-shrink:0;}
+.j-step-icon{font-size:1rem;display:block;margin-bottom:3px;}
+.j-step-name{font-weight:600;display:block;}
+.j-step-pct{font-size:0.62rem;color:var(--muted);margin-top:2px;}
+.j-arrow{font-size:1.1rem;color:var(--muted);padding:0 4px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;}
+.j-drop{font-size:0.58rem;color:var(--red);font-weight:600;}
+
+/* ── SCORECARD ── */
+.scorecard{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.sc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;box-shadow:0 1px 3px rgba(15,30,60,.04);}
+.sc-lbl{font-size:0.6rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.sc-months{display:flex;justify-content:space-around;gap:4px;margin-bottom:6px;}
+.sc-val{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:800;display:block;transition:opacity .2s;}
+.sc-month{font-size:0.56rem;color:var(--muted);margin-top:2px;}
+.sc-arrow{align-self:center;color:var(--muted);font-size:.8rem;}
+.sc-delta{font-size:0.6rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:6px;display:inline-block;}
+body.no-abr .m-abr,body.no-may .m-may,body.no-jun .m-jun{opacity:.12;}
+
+/* ── AGENT BANNER ── */
+.agent-highlight{background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(79,142,247,.04));border:1px solid rgba(52,211,153,.22);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.agent-stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;}
+.agent-stat{flex:1;min-width:110px;background:rgba(255,255,255,.75);border:1px solid var(--border);border-radius:9px;padding:12px;text-align:center;}
+.agent-stat-val{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;display:block;}
+.agent-stat-lbl{font-size:0.62rem;color:var(--muted);margin-top:3px;}
+
+/* ── PORTADA ── */
+.portada{background:#fff;border-radius:24px;padding:44px 48px;display:flex;align-items:center;box-shadow:0 4px 24px rgba(15,30,60,.07);border:1px solid var(--border);position:relative;overflow:hidden;margin-bottom:20px;}
+.portada::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--cami),var(--blue),var(--green));}
+.portada::after{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(30,196,208,.07),transparent 70%);pointer-events:none;}
+.p-content{flex:1;}
+.p-logo-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.p-logo-icon{font-size:1.5rem;}
+.p-logo-text{font-family:'Space Grotesk',sans-serif;font-size:1.7rem;font-weight:800;color:#0b1526;}
+.p-logo-ver{font-size:.62rem;font-weight:700;color:var(--cami);background:rgba(30,196,208,.1);padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:1px;}
+.p-tagline{font-family:'Space Grotesk',sans-serif;font-size:1.7rem;font-weight:800;color:#0b1526;line-height:1.15;margin-bottom:10px;}
+.p-tagline em{font-style:normal;background:linear-gradient(135deg,var(--cami),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.p-desc{font-size:.8rem;color:#5a6b85;line-height:1.65;max-width:560px;margin-bottom:16px;}
+.p-stats{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:16px;}
+.p-stat-val{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#0b1526;display:block;}
+.p-stat-lbl{font-size:.6rem;color:#8494ad;text-transform:uppercase;letter-spacing:.6px;}
+.p-brands{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+.p-brand-chip{font-size:.64rem;font-weight:700;padding:4px 12px;border-radius:20px;}
+.bc-carmel{background:rgba(251,146,60,.1);color:#c2681f;}
+.bc-pcfk{background:rgba(167,139,250,.12);color:#7c5fd3;}
+.bc-loguin{background:rgba(45,212,191,.12);color:#0f9488;}
+.bc-wa{background:rgba(52,211,153,.1);color:#0e9f6e;}
+.p-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e8ecf4;padding-top:12px;flex-wrap:wrap;gap:6px;}
+.p-footer-text{font-size:.66rem;color:#8494ad;}
+.p-period{font-size:.64rem;font-weight:700;color:#5a6b85;}
+
+/* ── CHAT ASISTENTE ── */
+.chat-wrap{display:grid;grid-template-columns:2fr 1fr;gap:12px;align-items:start;}
+.chat-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;height:640px;overflow:hidden;}
+.chat-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.chat-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--cami),var(--blue));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.chat-head-t{font-size:.8rem;font-weight:700;}
+.chat-head-s{font-size:.62rem;color:var(--muted);}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.cmsg{max-width:85%;padding:10px 13px;border-radius:12px;font-size:.76rem;line-height:1.65;white-space:pre-wrap;word-wrap:break-word;}
+.cmsg.user{align-self:flex-end;background:rgba(30,196,208,.12);border:1px solid rgba(30,196,208,.3);border-bottom-right-radius:3px;}
+.cmsg.bot{align-self:flex-start;background:var(--s2);border:1px solid var(--border);border-bottom-left-radius:3px;}
+.cmsg.bot b{color:var(--cami);}
+.cmsg.err{align-self:flex-start;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--muted);}
+.cmsg.typing{align-self:flex-start;background:var(--s2);border:1px solid var(--border);color:var(--muted);font-style:italic;}
+.chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);}
+.chat-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;color:var(--text);font-size:.76rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;resize:none;}
+.chat-input:focus{border-color:var(--cami);}
+.chat-send{background:var(--cami);border:none;border-radius:10px;padding:0 18px;color:#fff;font-weight:700;font-size:.76rem;cursor:pointer;transition:opacity .15s;}
+.chat-send:disabled{opacity:.4;cursor:default;}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.sugg-chip{font-size:.66rem;padding:5px 11px;border-radius:20px;background:var(--s2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .15s;}
+.sugg-chip:hover{border-color:var(--cami);color:var(--cami);}
+@media(max-width:900px){.chat-wrap{grid-template-columns:1fr;}}
+
+
+/* ── BARRA INFERIOR (móvil, estilo app nativa) ── */
+.bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-top:1px solid var(--border);z-index:300;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px 8px calc(6px + env(safe-area-inset-bottom));gap:2px;}
+.bnav::-webkit-scrollbar{display:none;}
+.bnav-btn{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:6px 11px;border-radius:12px;cursor:pointer;min-width:60px;}
+.bnav-ico{font-size:1.15rem;line-height:1;}
+.bnav-lbl{font-size:.56rem;font-weight:600;color:var(--muted);white-space:nowrap;}
+.bnav-btn.active{background:rgba(30,196,208,.12);}
+.bnav-btn.active .bnav-lbl{color:var(--cami);}
+
+@media(max-width:768px){
+  html{-webkit-text-size-adjust:100%;}
+  body{padding-bottom:calc(70px + env(safe-area-inset-bottom));}
+  .nav{padding:10px 14px;justify-content:center;}
+  .nav-tabs{display:none;}           /* la navegación pasa a la barra inferior */
+  .bnav{display:flex;}
+  .nav-logo{font-size:.92rem;}
+  .page{padding:14px 12px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)!important;}
+  .kpi-val{font-size:1.25rem;}
+  .scorecard{grid-template-columns:1fr 1fr;}
+  .sc-val{font-size:.95rem;}
+  .seg-grid,.mejora-grid{grid-template-columns:1fr;}
+  .g2,.g3,.g31,.g13,.g32{grid-template-columns:1fr;}
+  .card{padding:13px;}
+  .card > .tbl{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;}
+  .cmp-row{grid-template-columns:1fr;gap:5px;padding:10px 12px;}
+  .cmp-metric{font-weight:700;color:var(--text);}
+  .agent-stat-row{gap:8px;}
+  .agent-stat{min-width:calc(50% - 8px);}
+  .portada{padding:26px 18px;border-radius:18px;}
+  .p-tagline{font-size:1.3rem;}
+  .p-stats{gap:14px;}
+  .p-stat-val{font-size:1.05rem;}
+  .p-footer{flex-direction:column;align-items:flex-start;}
+  .funnel-label{width:92px;font-size:.64rem;}
+  .funnel-meta{width:58px;font-size:.6rem;}
+  .journey{gap:0;}
+  .j-step{min-width:92px;padding:8px 8px;}
+  #heatmapGridV{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  #heatmapGridV > div{min-width:560px;}
+  .chat-box{height:calc(100dvh - 220px);min-height:420px;}
+  .chat-input{font-size:16px;}       /* evita el zoom automático de iOS */
+  .tbl th,.tbl td{padding:6px 7px;}
+  .mfilter{margin:0 auto;}
+  .sec-head{margin-top:2px;}
+}
+@media(max-width:400px){
+  .kpi-grid{grid-template-columns:1fr 1fr!important;}
+  .scorecard{grid-template-columns:1fr;}
+}
+
+.footer{text-align:center;padding:20px;font-size:.64rem;color:var(--muted);border-top:1px solid var(--border);margin-top:10px;line-height:1.8;}
+.note{padding:9px 11px;border-radius:8px;font-size:.7rem;color:var(--muted);line-height:1.55;margin-top:8px;border:1px solid var(--border);background:var(--s2);}
+
+@media(max-width:900px) and (min-width:769px){.g3{grid-template-columns:1fr 1fr;}.kpi-grid{grid-template-columns:repeat(3,1fr)!important;}}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-logo">🤖 CAMI · Informe Abr–Jun 2026</div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" data-page="portada" onclick="showPage('portada',this)">Portada</button>
+    <button class="tab-btn" data-page="resumen" onclick="showPage('resumen',this)">Resumen Jun</button>
+    <button class="tab-btn" data-page="comparativo" onclick="showPage('comparativo',this)">Comparativo</button>
+    <button class="tab-btn" data-page="volumen" onclick="showPage('volumen',this)">Volumen</button>
+    <button class="tab-btn" data-page="agente" onclick="showPage('agente',this)">Agente</button>
+    <button class="tab-btn" data-page="marca" onclick="showPage('marca',this)">Marcas</button>
+    <button class="tab-btn" data-page="flujo" onclick="showPage('flujo',this)">Flujo</button>
+    <button class="tab-btn" data-page="satisfaccion" onclick="showPage('satisfaccion',this)">Satisfacción</button>
+    <button class="tab-btn" data-page="segmentos" onclick="showPage('segmentos',this)">Segmentos</button>
+    <button class="tab-btn" data-page="jornada" onclick="showPage('jornada',this)">Jornada</button>
+    <button class="tab-btn" data-page="plan" onclick="showPage('plan',this)">Plan de Acción</button>
+    <button class="tab-btn" data-page="chat" onclick="showPage('chat',this)">💬 Asistente</button>
+  </div>
+  <div class="nav-right">
+    <div class="mfilter">
+      <span class="mfilter-lbl">Filtro</span>
+      <span class="mchip abr" id="chip-abr" onclick="toggleMonth('abr')">◉ Abr</span>
+      <span class="mchip may" id="chip-may" onclick="toggleMonth('may')">◉ May</span>
+      <span class="mchip jun" id="chip-jun" onclick="toggleMonth('jun')">◉ Jun</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ PORTADA -->
+<div class="page active" id="page-portada">
+  <div class="portada">
+    <div class="p-content">
+      <div class="p-logo-row">
+        <div class="p-logo-icon">🤖</div>
+        <div class="p-logo-text">CAMI</div>
+        <span class="p-logo-ver">Asistente Virtual</span>
+      </div>
+      <div class="p-tagline">Tu asesora virtual<br><em>siempre disponible.</em></div>
+      <p class="p-desc">Asistente virtual inteligente para asesoras de venta directa. Gestión de pedidos, premios, cupo y soporte — todo desde WhatsApp, sin instalaciones, sin esperas.</p>
+      <div class="p-stats">
+        <div class="p-stat"><span class="p-stat-val">504.6K</span><span class="p-stat-lbl">Sesiones 3 meses</span></div>
+        <div class="p-stat"><span class="p-stat-val">97%</span><span class="p-stat-lbl">Autonomía IA (jun)</span></div>
+        <div class="p-stat"><span class="p-stat-val">87.4%</span><span class="p-stat-lbl">CSAT Fácil (jun)</span></div>
+        <div class="p-stat"><span class="p-stat-val">54.4K</span><span class="p-stat-lbl">Asesoras únicas (jun)</span></div>
+        <div class="p-stat"><span class="p-stat-val">×2.8</span><span class="p-stat-lbl">Transferencias a humano</span></div>
+      </div>
+      <div class="p-brands">
+        <span style="font-size:.66rem;color:#94a3b8;font-weight:600;margin-right:3px">Marcas:</span>
+        <span class="p-brand-chip bc-carmel">🟠 CARMEL</span>
+        <span class="p-brand-chip bc-pcfk">🟣 PACIFIKA</span>
+        <span class="p-brand-chip bc-loguin">🔵 LOGUIN</span>
+        <span class="p-brand-chip bc-wa">💬 WhatsApp</span>
+      </div>
+      <div class="p-footer">
+        <span class="p-footer-text">Canal <strong style="color:#64748b">573113494353</strong> · Informe Ejecutivo Abr–Jun 2026</span>
+        <span class="p-period">📊 3 meses · 11 secciones · Filtros por mes activos en la barra superior</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-head"><div class="sec-title">Vista rápida · 3 meses consolidados</div></div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(6,1fr)">
+    <div class="kpi cami"><div class="kpi-lbl">Sesiones Totales</div><div class="kpi-val">504.6K</div><div class="kpi-sub">Abr 162.8K · May 179.6K · Jun 162.2K</div></div>
+    <div class="kpi green"><div class="kpi-lbl">Autonomía Bot</div><div class="kpi-val">97–99%</div><div class="kpi-sub">Jun: 4,842 transferidos a humano</div></div>
+    <div class="kpi red"><div class="kpi-lbl">Inactividad 3+</div><div class="kpi-val">57.6%</div><div class="kpi-sub">Prom. 3 meses · Jun 58.2%</div><div class="kpi-badge badge-down">Fricción crítica persistente</div></div>
+    <div class="kpi amber"><div class="kpi-lbl">Duración prom.</div><div class="kpi-val">28.9m</div><div class="kpi-sub">Jun 29.8m · Mediana 30m</div></div>
+    <div class="kpi blue"><div class="kpi-lbl">Marketplace</div><div class="kpi-val">9.8%</div><div class="kpi-sub">Jun repunta a 9.7% (15,763)</div></div>
+    <div class="kpi teal"><div class="kpi-lbl">CSAT Fácil</div><div class="kpi-val">88.2%</div><div class="kpi-sub">Prom. 3 meses · Jun 87.4%</div></div>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="card-hd">Índice del informe</div>
+      <div class="metric-row"><span>📊 Resumen General Junio</span><span class="metric-val" style="color:var(--cami)">KPIs clave</span></div>
+      <div class="metric-row"><span>🔄 Comparativo Abr·May·Jun</span><span class="metric-val" style="color:var(--cami)">Evolución</span></div>
+      <div class="metric-row"><span>📈 Volumen &amp; Tráfico</span><span class="metric-val" style="color:var(--cami)">Horarios</span></div>
+      <div class="metric-row"><span>👤 Atención Humana</span><span class="metric-val" style="color:var(--cami)">Agentes</span></div>
+      <div class="metric-row"><span>🏷️ Por Marca</span><span class="metric-val" style="color:var(--cami)">CARMEL·PCFK·LOGUIN</span></div>
+      <div class="metric-row"><span>🔁 Flujo &amp; Funnel</span><span class="metric-val" style="color:var(--cami)">Conversión</span></div>
+      <div class="metric-row"><span>⭐ Satisfacción</span><span class="metric-val" style="color:var(--cami)">CSAT·Encuesta</span></div>
+      <div class="metric-row"><span>👥 Segmentos de Uso</span><span class="metric-val" style="color:var(--cami)">9 perfiles</span></div>
+      <div class="metric-row"><span>🗺️ Jornada del Usuario</span><span class="metric-val" style="color:var(--cami)">Flujos</span></div>
+      <div class="metric-row"><span>🚀 Plan de Acción</span><span class="metric-val" style="color:var(--cami)">Seguimiento + nuevas</span></div>
+    </div>
+    <div class="card" style="grid-column:span 2">
+      <div class="card-hd">Top hallazgos de junio 2026</div>
+      <div class="insight green"><div class="insight-icon">🟢</div><div><div class="insight-title">Transferencias a humano ×2.8: de 1,735 (may) a 4,842 (jun)</div>Cambio operativo mayor: la atención humana efectiva se disparó con cobertura estable 7h–19h. La brecha nocturna desapareció porque la opción ya no se ofrece fuera de horario.</div></div>
+      <div class="insight green"><div class="insight-icon">🟢</div><div><div class="insight-title">La encuesta CSAT se recuperó ×3.1: de 1,236 a 3,851 respuestas (2.37%)</div>La corrección solicitada en el plan de mayo (E9) muestra efecto. CSAT se mantiene alto: 87.4% "Fácil".</div></div>
+      <div class="insight amber"><div class="insight-icon">🟡</div><div><div class="insight-title">Junio operó solo 26 días: los domingos el canal estuvo prácticamente apagado</div>3 de 4 domingos con 0 sesiones. El volumen total cae −9.7% vs mayo, pero las sesiones por día activo suben +7.6% (6,237/día). La demanda no cayó — se concentró.</div></div>
+      <div class="insight red"><div class="insight-icon">🔴</div><div><div class="insight-title">Inactividad sigue crítica: 58.2% — y en CARMEL empeora a 57.5%</div>La mejora global es marginal (−0.7pp). El flujo de pedido sigue siendo el cuello de botella: 66,181 sesiones inician pedido y solo ~25,452 cierran limpio.</div></div>
+      <div class="insight red"><div class="insight-icon">🔴</div><div><div class="insight-title">"Agente no disponible" sube a 2,817 y el pico se movió al mediodía (12h–15h)</div>Ya no es un problema nocturno: es un problema de capacidad en horas hábiles, con pico de 285 casos a las 14h.</div></div>
+      <div class="insight blue"><div class="insight-icon">🔵</div><div><div class="insight-title">Marketplace repunta a 9.7% — pero solo gracias a CARMEL (12.2%)</div>LOGUIN cae a 6.7% (mínimo del trimestre). La adopción del catálogo digital se está polarizando por marca.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ RESUMEN -->
+<div class="page" id="page-resumen">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Resumen General · Junio 2026</div></div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(6,1fr)">
+    <div class="kpi blue"><div class="kpi-lbl">Total Sesiones</div><div class="kpi-val">162.2K</div><div class="kpi-sub">Jun 01–29 · 26 días activos</div><div class="kpi-badge badge-warn">▼ −9.7% vs may · +7.6%/día</div></div>
+    <div class="kpi teal"><div class="kpi-lbl">Autonomía IA</div><div class="kpi-val">97%</div><div class="kpi-sub">4,842 transferidas a humano</div><div class="kpi-badge badge-up">Atención humana ×2.8</div></div>
+    <div class="kpi red"><div class="kpi-lbl">Inactividad 3+</div><div class="kpi-val">58.2%</div><div class="kpi-sub">94,430 chats</div><div class="kpi-badge badge-up">▼ −0.7pp vs mayo</div></div>
+    <div class="kpi amber"><div class="kpi-lbl">Duración prom.</div><div class="kpi-val">29.8m</div><div class="kpi-sub">Mediana 30 min · 21.6 msgs/chat</div></div>
+    <div class="kpi purple"><div class="kpi-lbl">Marketplace</div><div class="kpi-val">9.7%</div><div class="kpi-sub">15,763 sesiones</div><div class="kpi-badge badge-up">▲ +0.6pp vs mayo</div></div>
+    <div class="kpi orange"><div class="kpi-lbl">CSAT Fácil</div><div class="kpi-val">87.4%</div><div class="kpi-sub">3,851 respuestas (2.37%)</div><div class="kpi-badge badge-up">Encuesta recuperada ×3.1</div></div>
+  </div>
+
+  <div class="agent-highlight">
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:800;color:var(--green);margin-bottom:5px">✅ Junio: la atención humana efectiva se multiplicó — 4,842 transferencias reales</div>
+    <div style="font-size:.76rem;color:var(--muted);line-height:1.65">HumanAttention sigue en False en el 100% de registros (pendiente S2 con proveedor). Medición real por mensajes de transferencia y selección del botón "Agente":</div>
+    <div class="agent-stat-row">
+      <div class="agent-stat"><span class="agent-stat-val" style="color:var(--pink)">13,522</span><div class="agent-stat-lbl">Solicitudes botón Agente (8.3%)</div></div>
+      <div class="agent-stat"><span class="agent-stat-val" style="color:var(--green)">4,842</span><div class="agent-stat-lbl">Transferidos a humano (todas las rutas)</div></div>
+      <div class="agent-stat"><span class="agent-stat-val" style="color:var(--red)">2,817</span><div class="agent-stat-lbl">Agente no disponible (20.8% de solicitudes)</div></div>
+      <div class="agent-stat"><span class="agent-stat-val" style="color:var(--muted)">10,666</span><div class="agent-stat-lbl">Redirigidos al bot (78.9%)</div></div>
+    </div>
+  </div>
+
+  <div class="g32">
+    <div class="card"><div class="card-hd">Volumen semanal por marca <span class="chip chip-good">Junio 2026</span></div><canvas id="weeklyBarR" height="100"></canvas></div>
+    <div class="card">
+      <div class="card-hd">Distribución por marca</div>
+      <canvas id="brandDonutR" height="150" width="150" style="display:block;margin:0 auto"></canvas>
+      <div style="margin-top:10px">
+        <div class="legend-row"><span><span class="legend-dot" style="background:#fb923c"></span>CARMEL</span><span class="legend-pct" style="color:#fb923c">39.0% · 63,276</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#a78bfa"></span>PCFK</span><span class="legend-pct" style="color:#a78bfa">23.4% · 37,992</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#2dd4bf"></span>LOGUIN</span><span class="legend-pct" style="color:#2dd4bf">20.8% · 33,721</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#64748b"></span>Sin marca</span><span class="legend-pct" style="color:#64748b">16.8% · 27,187</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card"><div class="card-hd">Opciones más usadas <span class="chip chip-info">Clics en menú · Jun</span></div><canvas id="menuBarR" height="210"></canvas></div>
+    <div class="card">
+      <div class="card-hd">Tipo de pedido enviado</div>
+      <canvas id="orderTypeR" height="140" width="140" style="margin:0 auto;display:block"></canvas>
+      <div style="margin-top:10px">
+        <div class="legend-row"><span><span class="legend-dot" style="background:#4f8ef7"></span>Texto</span><span class="legend-pct" style="color:#4f8ef7">88.6% · 54,005</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#f472b6"></span>Imagen</span><span class="legend-pct" style="color:#f472b6">9.0% · 5,499</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#fbbf24"></span>Audio</span><span class="legend-pct" style="color:#fbbf24">2.4% · 1,442</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd">Cierre de sesiones · Jun</div>
+      <canvas id="closeDonutR" height="140" width="140" style="margin:0 auto;display:block"></canvas>
+      <div style="margin-top:10px">
+        <div class="legend-row"><span><span class="legend-dot" style="background:#34d399"></span>CloseSession OK</span><span class="legend-pct" style="color:#34d399">70.9%</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#4f8ef7"></span>CloseFromCore</span><span class="legend-pct" style="color:#4f8ef7">22.8%</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#a78bfa"></span>SurveyClose</span><span class="legend-pct" style="color:#a78bfa">3.7%</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#f87171"></span>Falla/TimeOut</span><span class="legend-pct" style="color:#f87171">2.6%</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="note">📌 <b>Base junio:</b> 162,176 conversaciones · 54,433 asesoras únicas (~3.0 sesiones por asesora) · 84.5% reconocidas como recurrentes por CAMI ("¡Hola de nuevo!") · Datos del 01 al 29 de junio (el export no incluye jun 30).</div>
+</div>
+
+<!-- ================================================================ COMPARATIVO -->
+<div class="page" id="page-comparativo">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Scorecard Comparativo · Abril · Mayo · Junio 2026</div><span style="font-size:.64rem;color:var(--muted)">Usa los chips Abr/May/Jun de la barra superior para filtrar</span></div>
+  <div class="scorecard">
+    <div class="sc"><div class="sc-lbl">Total Sesiones</div><div class="sc-months"><div class="m-abr"><span class="sc-val" style="color:var(--purple)">162.8K</span><div class="sc-month">Abr</div></div><div class="m-may"><span class="sc-val" style="color:var(--blue)">179.6K</span><div class="sc-month">May</div></div><div class="m-jun"><span class="sc-val" style="color:var(--green)">162.2K</span><div class="sc-month">Jun</div></div></div><div class="sc-delta badge-warn">▼ −9.7% · pero +7.6% por día activo</div></div>
+    <div class="sc"><div class="sc-lbl">Inactividad 3+</div><div class="sc-months"><div class="m-abr"><span class="sc-val" style="color:var(--purple)">55.8%</span><div class="sc-month">Abr</div></div><div class="m-may"><span class="sc-val" style="color:var(--red)">58.9%</span><div class="sc-month">May</div></div><div class="m-jun"><span class="sc-val" style="color:var(--amber)">58.2%</span><div class="sc-month">Jun</div></div></div><div class="sc-delta badge-warn">▼ −0.7pp · sigue crítica</div></div>
+    <div class="sc"><div class="sc-lbl">CSAT Fácil</div><div class="sc-months"><div class="m-abr"><span class="sc-val" style="color:var(--purple)">88.4%</span><div class="sc-month">Abr</div></div><div class="m-may"><span class="sc-val" style="color:var(--blue)">88.8%</span><div class="sc-month">May</div></div><div class="m-jun"><span class="sc-val" style="color:var(--green)">87.4%</span><div class="sc-month">Jun</div></div></div><div class="sc-delta badge-warn">▼ −1.4pp con 3× más muestra</div></div>
+    <div class="sc"><div class="sc-lbl">Solicitudes Agente</div><div class="sc-months"><div class="m-abr"><span class="sc-val" style="color:var(--purple)">9.9%</span><div class="sc-month">Abr</div></div><div class="m-may"><span class="sc-val" style="color:var(--blue)">9.0%</span><div class="sc-month">May</div></div><div class="m-jun"><span class="sc-val" style="color:var(--green)">8.3%</span><div class="sc-month">Jun</div></div></div><div class="sc-delta badge-up">↓ 3 meses seguidos mejorando</div></div>
+    <div class="sc"><div class="sc-lbl">Transferencias a Humano</div><div class="sc-months"><div class="m-abr"><span class="sc-val" style="color:var(--purple)">2,187</span><div class="sc-month">Abr</div></div><div class="m-may"><span class="sc-val" style="color:var(--blue)">1,735</span><div class="sc-month">May</div></div><div class="m-jun"><span class="sc-val" style="color:var(--green)">4,842</span><div class="sc-month">Jun</div></div></div><div class="sc-delta badge-up">▲ ×2.8 vs mayo</div></div>
+    <div class="sc"><div class="sc-lbl">Agente No Disponible</div><div class="sc-months"><div class="m-abr"><span class="sc-val" style="color:var(--purple)">2,316</span><div class="sc-month">Abr</div></div><div class="m-may"><span class="sc-val" style="color:var(--blue)">2,513</span><div class="sc-month">May</div></div><div class="m-jun"><span class="sc-val" style="color:var(--red)">2,817</span><div class="sc-month">Jun</div></div></div><div class="sc-delta badge-down">▲ +12% · pico movido a 14h</div></div>
+    <div class="sc"><div class="sc-lbl">Marketplace</div><div class="sc-months"><div class="m-abr"><span class="sc-val" style="color:var(--purple)">10.7%</span><div class="sc-month">Abr</div></div><div class="m-may"><span class="sc-val" style="color:var(--blue)">9.1%</span><div class="sc-month">May</div></div><div class="m-jun"><span class="sc-val" style="color:var(--green)">9.7%</span><div class="sc-month">Jun</div></div></div><div class="sc-delta badge-up">▲ +0.6pp · repunte parcial</div></div>
+    <div class="sc"><div class="sc-lbl">Participación Encuesta</div><div class="sc-months"><div class="m-abr"><span class="sc-val" style="color:var(--purple)">5,517</span><div class="sc-month">Abr</div></div><div class="m-may"><span class="sc-val" style="color:var(--red)">1,236</span><div class="sc-month">May</div></div><div class="m-jun"><span class="sc-val" style="color:var(--green)">3,851</span><div class="sc-month">Jun</div></div></div><div class="sc-delta badge-up">▲ ×3.1 · recuperación E9</div></div>
+  </div>
+
+  <div class="cmp-card">
+    <div class="cmp-header"><span style="font-size:.78rem;font-weight:600">Indicadores clave mes a mes · Δ = mayo→junio</span><div class="cmp-months"><span class="cmp-month abr">◉ Abril</span><span class="cmp-month may">◉ Mayo</span><span class="cmp-month jun">◉ Junio</span></div></div>
+    <div id="cmpTableC"></div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="card-hd">Evolución por marca — 12 semanas <span class="chip chip-info">Tendencia trimestral</span></div><canvas id="brandEvol12" height="150"></canvas></div>
+    <div class="card">
+      <div class="card-hd">Lo que mejoró vs lo que empeoró en junio</div>
+      <div class="insight green"><div class="insight-icon">🟢</div><div><div class="insight-title">Transferencias humanas ×2.8 (1,735→4,842)</div>Cobertura estable 7h–19h. El cambio operativo más grande del trimestre.</div></div>
+      <div class="insight green"><div class="insight-icon">🟢</div><div><div class="insight-title">Encuesta recuperada: 1,236→3,851 respuestas (0.69%→2.37%)</div>La corrección E9 del plan de mayo funcionó. Meta 3.5% aún pendiente.</div></div>
+      <div class="insight green"><div class="insight-icon">🟢</div><div><div class="insight-title">Solicitudes de agente bajan por 3er mes: 9.9→9.0→8.3%</div>CAMI resuelve más por sí solo. Marketplace también repunta +0.6pp.</div></div>
+      <div class="insight red"><div class="insight-icon">🔴</div><div><div class="insight-title">Domingos sin servicio: 3 de 4 domingos con 0 sesiones</div>Volumen mensual −9.7%. Decidir si es política deliberada y comunicarla, o restaurar.</div></div>
+      <div class="insight red"><div class="insight-icon">🔴</div><div><div class="insight-title">"No disponible" sube a 2,817 y se concentra 12h–15h</div>Ya no es brecha nocturna: es falta de capacidad en horas hábiles (pico 285 a las 14h).</div></div>
+      <div class="insight amber"><div class="insight-icon">🟡</div><div><div class="insight-title">CSAT baja levemente 88.8→87.4% y CARMEL empeora inactividad (57.5%)</div>Con 3× más muestra el CSAT es más representativo; vigilar tendencia en julio.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ VOLUMEN -->
+<div class="page" id="page-volumen">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Volumen &amp; Tráfico · Comparativo trimestral</div></div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
+    <div class="kpi green"><div class="kpi-lbl">Sesiones Jun</div><div class="kpi-val">162.2K</div><div class="kpi-sub">26 días activos · 6,237/día (+7.6%)</div></div>
+    <div class="kpi orange"><div class="kpi-lbl">Pico Sem 4</div><div class="kpi-val" style="font-size:1.2rem">44,429</div><div class="kpi-sub">Jun 22–29 · cierre de campaña</div></div>
+    <div class="kpi purple"><div class="kpi-lbl">Pico horario</div><div class="kpi-val" style="font-size:1.2rem">08h</div><div class="kpi-sub">11,736 ses · 2º pico 19h (11,632)</div></div>
+    <div class="kpi teal"><div class="kpi-lbl">Día más activo</div><div class="kpi-val" style="font-size:1.2rem">Martes</div><div class="kpi-sub">31,376 · consistente 3 meses</div></div>
+    <div class="kpi red"><div class="kpi-lbl">Domingos</div><div class="kpi-val">2,235</div><div class="kpi-sub">Solo jun 28 · 3 domingos en cero</div><div class="kpi-badge badge-down">Canal apagado</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-hd">Volumen 12 semanas Abr–Jun <span class="chip chip-info">Tendencia</span></div><canvas id="weekly12C" height="130"></canvas></div>
+    <div class="card"><div class="card-hd">Distribución horaria comparativa</div><canvas id="hourCmpC" height="130"></canvas></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-hd">Día de semana comparativo <span class="chip chip-bad">Dom se apaga en jun</span></div><canvas id="wdayCmpC" height="130"></canvas></div>
+    <div class="card">
+      <div class="card-hd">Datos de tráfico clave · Junio</div>
+      <div class="metric-row"><span>Hora pico</span><span class="metric-val" style="color:var(--green)">08h · 11,736 ses</span></div>
+      <div class="metric-row"><span>Segundo pico</span><span class="metric-val" style="color:var(--green)">19h · 11,632 ses</span></div>
+      <div class="metric-row"><span>Valle nocturno</span><span class="metric-val" style="color:var(--muted)">02h · 111 ses</span></div>
+      <div class="metric-row"><span>Tráfico Lun–Vie</span><span class="metric-val">143,645 (88.6%)</span></div>
+      <div class="metric-row"><span>Tráfico Sáb–Dom</span><span class="metric-val" style="color:var(--red)">18,531 (11.4%) · ▼ desde 19.4%</span></div>
+      <div class="metric-row"><span>Sesiones/día activo</span><span class="metric-val">6,237 (jun) · 5,795 (may) · 5,428 (abr)</span></div>
+      <div class="note">⚠️ Los domingos 7, 14 y 21 de junio el canal registró <b>0 sesiones</b>. Solo el domingo 28 operó (2,235). Si es una decisión de negocio, debe comunicarse a las asesoras; si no, es una falla de disponibilidad que costó ~30K sesiones potenciales.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">Mapa de calor Día × Hora · Junio 2026 <span class="chip chip-good">Comportamiento horario</span></div>
+    <div id="heatmapGridV"></div>
+    <div style="display:flex;gap:4px;margin-top:7px;align-items:center"><span style="font-size:.6rem;color:var(--muted)">Menor</span><div style="height:7px;width:90px;border-radius:4px;background:linear-gradient(90deg,#e5e9f2,var(--cami),var(--pink))"></div><span style="font-size:.6rem;color:var(--muted)">Mayor</span></div>
+  </div>
+</div>
+
+<!-- ================================================================ AGENTE -->
+<div class="page" id="page-agente">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Atención Humana · Análisis Real · Junio</div></div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">
+    <div class="kpi pink"><div class="kpi-lbl">Solicitudes Agente Jun</div><div class="kpi-val">13,522</div><div class="kpi-sub">8.3% del total · ▼ 3er mes a la baja</div></div>
+    <div class="kpi green"><div class="kpi-lbl">Transferidos humano</div><div class="kpi-val">4,842</div><div class="kpi-sub">Todas las rutas · May: 1,735</div><div class="kpi-badge badge-up">×2.8 — gran mejora</div></div>
+    <div class="kpi amber"><div class="kpi-lbl">Agente no disponible</div><div class="kpi-val">2,817</div><div class="kpi-sub">20.8% de solicitudes botón</div><div class="kpi-badge badge-down">▲ +12% vs mayo</div></div>
+    <div class="kpi blue"><div class="kpi-lbl">Redirigidos bot</div><div class="kpi-val">10,666</div><div class="kpi-sub">78.9% autogestión</div></div>
+    <div class="kpi red"><div class="kpi-lbl">3 meses sin atención</div><div class="kpi-val">7,646</div><div class="kpi-sub">Abr 2,316 + May 2,513 + Jun 2,817</div><div class="kpi-badge badge-down">Acumulado creciente</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-hd">Resultado de solicitudes Abr·May·Jun <span class="chip chip-info">Comparativo</span></div><canvas id="agentOutcomeC" height="150"></canvas>
+      <div class="note">📌 En junio las transferencias se midieron por el mensaje real "te estoy transfiriendo" en <b>todas las rutas</b> (botón Agente, escalamiento GPT, radicaciones), no solo el botón — por eso superan a las solicitudes directas atendidas.</div>
+    </div>
+    <div class="card"><div class="card-hd">Agente no disponible por hora <span class="chip chip-bad">El pico migró de 20h a 14h</span></div><canvas id="noAvailHourC" height="150"></canvas>
+      <div style="margin-top:8px;padding:9px 11px;background:rgba(248,113,113,.07);border-radius:8px;border:1px solid rgba(248,113,113,.18);font-size:.71rem;color:var(--muted)">⚠️ En junio la opción de agente solo se ofrece <strong style="color:var(--amber)">7h–19h</strong>: el "no disponible" nocturno desapareció, pero ahora se concentra <strong style="color:var(--red)">12h–15h</strong> (pico 285 a las 14h). Es un problema de capacidad de agentes en horas hábiles, probablemente en el relevo de almuerzo.</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card"><div class="card-hd">No disponible por marca <span class="chip chip-bad">CARMEL +36%</span></div><canvas id="noAvailBrandC" height="150"></canvas></div>
+    <div class="card"><div class="card-hd">Transferidos vs no disponible por hora · Jun</div><canvas id="agentHourJ2" height="150"></canvas></div>
+    <div class="card">
+      <div class="card-hd">Diagnóstico</div>
+      <div class="insight green"><div class="insight-icon">🟢</div><div><div class="insight-title">La capacidad de transferencia mejoró estructuralmente</div>4,842 asesoras hablaron con humano en junio — más que abril y mayo juntos.</div></div>
+      <div class="insight red"><div class="insight-icon">🔴</div><div><div class="insight-title">HumanAttention=False sigue sin corregirse (S2)</div>Tercer mes con el campo inservible. Insistir al proveedor.</div></div>
+      <div class="insight amber"><div class="insight-icon">🟡</div><div><div class="insight-title">2,817 sin atención pese a más capacidad</div>El refuerzo debe ir a la franja 12h–15h. La iniciativa S3 (guardia 19h–21h) quedó obsoleta: rediseñarla.</div></div>
+      <div class="insight amber"><div class="insight-icon">🟡</div><div><div class="insight-title">70.8% pide agente sin intentar nada antes</div>Mejoró vs 89.2% de mayo, pero el saludo proactivo (E3) sigue pendiente.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ MARCA -->
+<div class="page" id="page-marca">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Por Marca · Comparativo Abr · May · Jun</div></div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi orange"><div class="kpi-lbl">CARMEL 🟠</div><div class="kpi-val" style="font-size:1.05rem">54.9K → 59.9K → 63.3K</div><div class="kpi-sub">+5.6% vs may · GPT-resp mejora a 22.4% · pero inactividad sube a 57.5% y "no disp." +36%</div></div>
+    <div class="kpi purple"><div class="kpi-lbl">PCFK Pacifika 🟣</div><div class="kpi-val" style="font-size:1.05rem">43.7K → 46.5K → 38.0K</div><div class="kpi-sub">−18.2% vs may · mejor inactividad del grupo (52.8%) · Marketplace cae a 8.5%</div></div>
+    <div class="kpi teal"><div class="kpi-lbl">LOGUIN 🔵</div><div class="kpi-val" style="font-size:1.05rem">37.2K → 39.2K → 33.7K</div><div class="kpi-sub">−13.9% vs may · GPT-resp más alta (30.7%) · Marketplace mínimo del trimestre (6.7%)</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd">Comparativo de indicadores por marca</div>
+      <table class="tbl">
+        <thead><tr><th></th><th colspan="3" style="color:var(--orange)">CARMEL</th><th colspan="3" style="color:var(--purple)">PCFK</th><th colspan="3" style="color:var(--teal)">LOGUIN</th></tr></thead>
+        <thead><tr><th>Indicador</th><th>Abr</th><th>May</th><th>Jun</th><th>Abr</th><th>May</th><th>Jun</th><th>Abr</th><th>May</th><th>Jun</th></tr></thead>
+        <tbody>
+          <tr><td>Sesiones</td><td>54,852</td><td>59,935</td><td><b>63,276</b></td><td>43,727</td><td>46,458</td><td>37,992</td><td>37,216</td><td>39,156</td><td>33,721</td></tr>
+          <tr><td>Inactividad 3+</td><td>51.0%</td><td>53.8%</td><td style="color:var(--red)">57.5%</td><td>50.6%</td><td>53.5%</td><td style="color:var(--green)">52.8%</td><td>51.5%</td><td>54.5%</td><td>53.4%</td></tr>
+          <tr><td>Marketplace</td><td>11.0%</td><td>9.8%</td><td style="color:var(--green)">12.2%</td><td>11.6%</td><td>9.2%</td><td>8.5%</td><td>9.8%</td><td>8.4%</td><td style="color:var(--red)">6.7%</td></tr>
+          <tr><td>ChatGPT-resp</td><td>26.4%</td><td>28.2%</td><td style="color:var(--green)">22.4%</td><td>26.1%</td><td>29.1%</td><td>29.4%</td><td>27.4%</td><td>29.4%</td><td style="color:var(--red)">30.7%</td></tr>
+          <tr><td>Agente no disp.</td><td>838</td><td>965</td><td style="color:var(--red)">1,315</td><td>715</td><td>684</td><td>727</td><td>491</td><td>521</td><td style="color:var(--green)">473</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card"><div class="card-hd">Inactividad por marca · 3 meses <span class="chip chip-bad">CARMEL empeora</span></div><canvas id="brandInactC" height="150"></canvas></div>
+  </div>
+  <div class="g3">
+    <div class="card"><div class="card-hd">Marketplace por marca <span class="chip chip-warn">Se polariza</span></div><canvas id="brandMktC" height="140"></canvas></div>
+    <div class="card"><div class="card-hd">GPT-response por marca <span class="chip chip-info">CARMEL mejora</span></div><canvas id="brandGptC" height="140"></canvas></div>
+    <div class="card">
+      <div class="card-hd">Observaciones de junio</div>
+      <div class="insight orange"><div class="insight-icon">🟠</div><div><div class="insight-title">CARMEL — crece +5.6% y lidera Marketplace (12.2%)</div>Pero su inactividad salta a 57.5% y concentra el 52% de los "no disponible". Crecer sin capacidad degrada la experiencia.</div></div>
+      <div class="insight purple"><div class="insight-icon">🟣</div><div><div class="insight-title">PCFK — cae −18.2% en volumen (posible calendario de campaña)</div>Es la marca con mejor retención (52.8% inact.). Validar con negocio si la caída es estacional.</div></div>
+      <div class="insight teal"><div class="insight-icon">🔵</div><div><div class="insight-title">LOGUIN — Marketplace en mínimo (6.7%) y GPT-resp más alta (30.7%)</div>El flujo de pedido de LOGUIN es el menos resolutivo. Prioridad para replicar lo que mejoró en CARMEL.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ FLUJO -->
+<div class="page" id="page-flujo">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Flujo &amp; Funnel · Junio 2026</div></div>
+  <div class="g13">
+    <div class="card">
+      <div class="card-hd">Funnel de pedidos Junio 2026 <span class="chip chip-bad">~16% cierra limpio</span></div>
+      <div id="funnelVizF"></div>
+      <div class="note">Metodología junio: medición directa sobre mensajes. "Pedido completado" es un proxy = inició pedido + cerró sesión correctamente sin mensajes de inactividad.</div>
+    </div>
+    <div class="card">
+      <div class="card-hd">Métricas de flujo · Jun</div>
+      <div class="metric-row"><span>Inician conv.</span><span class="metric-val" style="color:var(--green)">162,176</span></div>
+      <div class="metric-row"><span>Pasan autenticación</span><span class="metric-val">137,780 (85.0%)</span></div>
+      <div class="metric-row"><span>Llegan al menú</span><span class="metric-val">131,551 (81.1%)</span></div>
+      <div class="metric-row"><span>Inician pedido</span><span class="metric-val">66,181 (40.8%)</span></div>
+      <div class="metric-row"><span>Completado (proxy)</span><span class="metric-val" style="color:var(--amber)">25,452 (15.7%)</span></div>
+      <div class="metric-row"><span><b>Abandono del pedido</b></span><span class="metric-val" style="color:var(--red)">~61.5%</span></div>
+      <div style="margin-top:10px;padding:10px;background:rgba(248,113,113,.07);border-radius:8px;border:1px solid rgba(248,113,113,.18);font-size:.72rem">⚠️ De cada 10 asesoras que inician un pedido, <strong style="color:var(--red)">~6 lo abandonan</strong> antes de un cierre limpio.</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-hd">Top Flow Steps · Jun <span class="chip chip-info">Último paso</span></div><canvas id="flowStepF" height="190"></canvas></div>
+    <div class="card"><div class="card-hd">Duración promedio por flow step · Jun <span class="chip chip-warn">Tiempo</span></div><canvas id="durByFlowF" height="190"></canvas></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hd">Distribución de inactividad · Jun <span class="chip chip-bad">Binaria</span></div>
+      <canvas id="inactF" height="110"></canvas>
+      <div class="insight red" style="margin-top:10px"><div class="insight-icon">⚡</div><div>Sigue siendo <strong>binaria</strong>: 0 o 3 mensajes. 94,430 chats (58.2%) requirieron los 3 recordatorios — el quiebre estructural del flujo de pedido persiste por tercer mes.</div></div>
+    </div>
+    <div class="card"><div class="card-hd">Tipos de cierre Abr·May·Jun <span class="chip chip-info">Comparativo</span></div><canvas id="closeCompF" height="170"></canvas></div>
+  </div>
+</div>
+
+<!-- ================================================================ SATISFACCIÓN -->
+<div class="page" id="page-satisfaccion">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Satisfacción &amp; CSAT · Comparativo</div></div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi teal"><div class="kpi-lbl">CSAT Fácil</div><div class="kpi-val" style="font-size:1.15rem">88.4→88.8→87.4%</div><div class="kpi-sub">Jun con 3× más muestra</div><div class="kpi-badge badge-warn">Leve baja, más representativo</div></div>
+    <div class="kpi green"><div class="kpi-lbl">Participación</div><div class="kpi-val" style="font-size:1.15rem">3,851</div><div class="kpi-sub">0.69% → 2.37% del total</div><div class="kpi-badge badge-up">Recuperación ×3.1 (E9 ✓)</div></div>
+    <div class="kpi pink"><div class="kpi-lbl">CSAT Difícil</div><div class="kpi-val" style="font-size:1.15rem">12.6%</div><div class="kpi-sub">484 respuestas · May 11.2%</div></div>
+    <div class="kpi amber"><div class="kpi-lbl">NPS estimado</div><div class="kpi-val" style="font-size:1.15rem">n/d</div><div class="kpi-sub">Metodología Abr–May (59→61) no replicable con el dato disponible de junio</div></div>
+  </div>
+  <div class="g31">
+    <div class="card">
+      <div class="card-hd">Feedback cualitativo · Voz de la asesora · Junio (textual)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--green);margin-bottom:7px">✅ Positivo</div>
+          <div style="background:var(--s2);border-left:3px solid var(--green);border-radius:0 7px 7px 0;padding:8px 10px;font-size:.72rem;color:var(--muted);font-style:italic;margin-bottom:6px;line-height:1.5">"Muy fácil y buena atención"</div>
+          <div style="background:var(--s2);border-left:3px solid var(--green);border-radius:0 7px 7px 0;padding:8px 10px;font-size:.72rem;color:var(--muted);font-style:italic;margin-bottom:6px;line-height:1.5">"Todo salió bien por el momento, gracias"</div>
+          <div style="background:var(--s2);border-left:3px solid var(--green);border-radius:0 7px 7px 0;padding:8px 10px;font-size:.72rem;color:var(--muted);font-style:italic;line-height:1.5">"Nada hasta ahora, todo está muy bien"</div>
+        </div>
+        <div>
+          <div style="font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--red);margin-bottom:7px">⚠️ Mejora necesaria</div>
+          <div style="background:var(--s2);border-left:3px solid var(--red);border-radius:0 7px 7px 0;padding:8px 10px;font-size:.72rem;color:var(--muted);font-style:italic;margin-bottom:6px;line-height:1.5">"Quiero ingresar pedido y me dicen código no válido o no existe"</div>
+          <div style="background:var(--s2);border-left:3px solid var(--red);border-radius:0 7px 7px 0;padding:8px 10px;font-size:.72rem;color:var(--muted);font-style:italic;margin-bottom:6px;line-height:1.5">"Quiero que me informes cuando el pedido se haya despachado"</div>
+          <div style="background:var(--s2);border-left:3px solid var(--red);border-radius:0 7px 7px 0;padding:8px 10px;font-size:.72rem;color:var(--muted);font-style:italic;margin-bottom:6px;line-height:1.5">"Me enviaron un premio que no pedí" · "El pedido de campaña 9 no ha llegado"</div>
+          <div style="background:var(--s2);border-left:3px solid var(--red);border-radius:0 7px 7px 0;padding:8px 10px;font-size:.72rem;color:var(--muted);font-style:italic;line-height:1.5">"Las respuestas que dan no resuelven mi duda"</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd">CSAT Junio 2026</div>
+      <canvas id="csatS" width="130" height="130" style="display:block;margin:0 auto"></canvas>
+      <div style="margin-top:10px">
+        <div class="legend-row"><span><span class="legend-dot" style="background:#34d399"></span>Fácil 🙂</span><span class="legend-pct" style="color:var(--green)">87.4% · 3,367</span></div>
+        <div class="legend-row"><span><span class="legend-dot" style="background:#f87171"></span>Difícil 🙁</span><span class="legend-pct" style="color:var(--red)">12.6% · 484</span></div>
+      </div>
+      <div style="margin-top:10px;padding:9px;background:rgba(52,211,153,.07);border-radius:8px;border:1px solid rgba(52,211,153,.18);font-size:.71rem;color:var(--muted)">La participación subió a <strong style="color:var(--green)">2.37%</strong> (de 0.69% en mayo). Siguiente meta: 3.5% presentando la encuesta en todos los cierres exitosos.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hd">Respuestas encuesta — 12 semanas Abr·May·Jun <span class="chip chip-good">Recuperación sostenida en junio</span></div>
+    <canvas id="surveyLine" height="100"></canvas>
+  </div>
+</div>
+
+<!-- ================================================================ SEGMENTOS -->
+<div class="page" id="page-segmentos">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">¿Para qué usa CAMI cada asesora? · 9 Segmentos · Junio 2026</div></div>
+  <div class="seg-grid" id="segGrid"></div>
+  <div class="g2">
+    <div class="card"><div class="card-hd">Inactividad y duración por segmento · Jun</div><canvas id="segInactS" height="160"></canvas></div>
+    <div class="card">
+      <div class="card-hd">Lecturas clave de segmentos</div>
+      <div class="insight blue"><div class="insight-icon">🛍️</div><div><div class="insight-title">Solo Pedido sigue siendo el corazón: 59,941 sesiones (37%)</div>Con 55% de inactividad. Cada punto que se recupere aquí es el mayor impacto posible en la experiencia.</div></div>
+      <div class="insight red"><div class="insight-icon">🎁</div><div><div class="insight-title">Premios: el segmento más atascado — 68.2% de inactividad</div>Hallazgo nuevo de junio. Las asesoras entran a consultar premios y el flujo no cierra. Revisar el flujo de premios ("me enviaron un premio que no pedí", "quiero ver el premio que elegí").</div></div>
+      <div class="insight pink"><div class="insight-icon">👤</div><div><div class="insight-title">Solo Agente crece a 8,337 sesiones (5.1%)</div>Coherente con las transferencias ×2.8: al haber más atención humana disponible, más asesoras la usan. Duración alta: 44.1 min.</div></div>
+      <div class="insight amber"><div class="insight-icon">🚪</div><div><div class="insight-title">Abandono temprano: 21,337 (13.2%) con 91.6% de inactividad</div>Entran, escriben poco y se van. El saludo proactivo (E3) sigue siendo la palanca.</div></div>
+      <div class="note">Nota: la segmentación de junio se recalculó directamente sobre los mensajes (selecciones reales de menú). Las cifras de Abr–May del informe anterior usaron una heurística similar pero no idéntica; las comparaciones entre meses son direccionales.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ JORNADA -->
+<div class="page" id="page-jornada">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Jornada del Usuario · Flujos por Perfil · Junio</div></div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd">🛍️ Jornada del Pedido Puro (37.0%) <span class="chip chip-bad">55% queda inactiva</span></div>
+    <div class="journey" id="jP1"></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px">
+      <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:9px;font-size:.7rem;color:var(--muted)"><strong style="color:var(--green)">Paso 1 ✓</strong><br>Autenticación fluida. 85% pasa.</div>
+      <div style="background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:9px;font-size:.7rem;color:var(--muted)"><strong style="color:var(--green)">Paso 2 ✓</strong><br>Seleccionan "Pedidos" sin fricción. 40.8% inicia pedido.</div>
+      <div style="background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:9px;font-size:.7rem;color:var(--muted)"><strong style="color:var(--red)">Paso 3 🔴</strong><br>Envían lista (88.6% texto). GPT procesa: aquí se atasca la mayoría.</div>
+      <div style="background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:9px;font-size:.7rem;color:var(--muted)"><strong style="color:var(--amber)">Paso 4 🟡</strong><br>Solo ~38% de quienes inician cierra limpio.</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd">👤 Jornada del Solo-Agente (5.1%) <span class="chip chip-warn">Mejor que en mayo, aún con brecha</span></div>
+    <div class="journey" id="jP2"></div>
+    <div style="margin-top:10px;padding:10px 12px;background:rgba(244,114,182,.07);border-radius:9px;border:1px solid rgba(244,114,182,.2);font-size:.73rem;color:var(--muted)">📌 <strong style="color:var(--pink)">70.8% va directo al botón "Agente"</strong> sin intentar otra función (mayo: 89.2% — mejoró). Con la nueva capacidad, muchas más logran transferencia, pero 2,817 aún reciben "no disponible" en horas hábiles.</div>
+  </div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd">⚡ Jornada Pedido + Agente (0.8% — las más frustradas) <span class="chip chip-warn">44.7 min promedio</span></div>
+    <div class="journey" id="jP3"></div>
+    <div style="margin-top:10px;padding:10px 12px;background:rgba(251,146,60,.07);border-radius:9px;border:1px solid rgba(251,146,60,.2);font-size:.73rem;color:var(--muted)">🔥 Intentan el pedido, algo falla ("código no válido", "me digitaron mal los códigos") y escalan. 35.3 msgs/chat y solo 17.9% de inactividad — son muy activas pero la experiencia es degradada.</div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-hd">Hora solicitud agente — transferidos vs no disponible · Jun</div><canvas id="agentHourJ" height="150"></canvas></div>
+    <div class="card"><div class="card-hd">¿Qué hicieron antes de pedir agente? · Jun</div><canvas id="beforeAgentJ" height="150"></canvas>
+      <div class="insight pink" style="margin-top:10px"><div class="insight-icon">🧩</div><div><div class="insight-title">70.8% pide agente sin intentar nada más</div>Bajó 18pp vs mayo, pero el saludo con acciones sugeridas (E3) sigue siendo la mayor palanca para este perfil.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ PLAN -->
+<div class="page" id="page-plan">
+  <div class="sec-head" style="margin-top:6px">
+    <div class="sec-title">Plan de Acción · Seguimiento + Oportunidades de Junio</div>
+    <span style="font-size:.66rem;color:var(--muted)">Estado de las 18 iniciativas de mayo + 5 nuevas oportunidades detectadas en junio</span>
+  </div>
+
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi green"><div class="kpi-lbl">Con evidencia de avance</div><div class="kpi-val">3</div><div class="kpi-sub">E9 encuesta · capacidad de agentes · GPT CARMEL</div></div>
+    <div class="kpi red"><div class="kpi-lbl">Sin avance visible</div><div class="kpi-val">7</div><div class="kpi-sub">E1–E3, S1, S2, S4, S5</div></div>
+    <div class="kpi amber"><div class="kpi-lbl">Requieren rediseño</div><div class="kpi-val">1</div><div class="kpi-sub">S3: el pico migró de 20h a 14h</div></div>
+    <div class="kpi blue"><div class="kpi-lbl">Nuevas oportunidades</div><div class="kpi-val">5</div><div class="kpi-sub">Domingos · Premios · LOGUIN · CARMEL · 12h–15h</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-hd">Seguimiento — iniciativas P1/P2 de mayo con evidencia de junio</div>
+    <table class="tbl">
+      <thead><tr><th>#</th><th>Iniciativa (plan mayo)</th><th>Indicador que la mide</th><th>Mayo</th><th>Junio</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td>E9</td><td>Restaurar encuesta CSAT</td><td>Respuestas / participación</td><td>1,236 · 0.69%</td><td><b>3,851 · 2.37%</b></td><td><span class="pill" style="background:rgba(52,211,153,.12);color:var(--green)">✅ Avanzó ×3.1 · meta 3.5%</span></td></tr>
+        <tr><td>—</td><td>Capacidad de transferencia a humano</td><td>Transferencias efectivas</td><td>1,735</td><td><b>4,842</b></td><td><span class="pill" style="background:rgba(52,211,153,.12);color:var(--green)">✅ ×2.8 · consolidar</span></td></tr>
+        <tr><td>E2</td><td>Menú post-GPT con acciones</td><td>% ChatGPT-response global</td><td>23.9%</td><td>23.2% (CARMEL 22.4%)</td><td><span class="pill" style="background:rgba(251,191,36,.12);color:var(--amber)">🟡 Mejora solo en CARMEL — replicar</span></td></tr>
+        <tr><td>E1</td><td>Confirmación inmediata pedido</td><td>Inactividad 3+</td><td>58.9%</td><td>58.2%</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">🔴 Sin cambio material</span></td></tr>
+        <tr><td>E3</td><td>Saludo proactivo personalizado</td><td>Abandono temprano</td><td>~9.7%</td><td>13.2%</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">🔴 Pendiente</span></td></tr>
+        <tr><td>S1</td><td>Ruta alternativa "no disponible"</td><td>Casos sin atención</td><td>2,513</td><td>2,817</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">🔴 Empeoró +12%</span></td></tr>
+        <tr><td>S2</td><td>Corregir HumanAttention</td><td>Campo confiable</td><td>False 100%</td><td>False 100%</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">🔴 3er mes sin corrección</span></td></tr>
+        <tr><td>S3</td><td>Guardia agentes 19h–21h</td><td>Pico "no disponible"</td><td>20h (548)</td><td>14h (285)</td><td><span class="pill" style="background:rgba(251,191,36,.12);color:var(--amber)">🟡 Obsoleta — rediseñar a 12h–15h</span></td></tr>
+        <tr><td>S4</td><td>Catálogo posición 2 del menú</td><td>% Marketplace</td><td>9.1%</td><td>9.7%</td><td><span class="pill" style="background:rgba(251,191,36,.12);color:var(--amber)">🟡 Repunte solo por CARMEL</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec-head"><div class="sec-title">Nuevas oportunidades detectadas en junio</div></div>
+  <div class="mejora-grid">
+    <div class="mejora-card" style="border-top:3px solid var(--red)"><div class="mejora-num">N1</div><div class="mejora-cat" style="color:var(--red)">Operaciones · Disponibilidad · P1</div><div class="mejora-title">Definir y comunicar el servicio de los domingos</div><div class="mejora-body">3 de 4 domingos con 0 sesiones (~30K sesiones potenciales del mes). Si el cierre dominical es deliberado, comunicarlo en el saludo del sábado y en el mensaje de fuera de horario; si no lo es, restaurar disponibilidad y monitorear.</div><div class="mejora-impact" style="background:rgba(248,113,113,.12);color:var(--red)">Recuperar hasta 30K ses/mes</div></div>
+
+    <div class="mejora-card" style="border-top:3px solid var(--red)"><div class="mejora-num">N2</div><div class="mejora-cat" style="color:var(--red)">Operaciones · Agentes · P1</div><div class="mejora-title">Reforzar capacidad de agentes 12h–15h</div><div class="mejora-body">El "no disponible" ya no es nocturno: 1,015 casos entre 12h y 15h (36% del total), pico 285 a las 14h — patrón típico de relevo de almuerzo. Escalonar los turnos de almuerzo y medir semanalmente.</div><div class="mejora-impact" style="background:rgba(248,113,113,.12);color:var(--red)">↓ −40% casos sin atención</div></div>
+
+    <div class="mejora-card" style="border-top:3px solid var(--amber)"><div class="mejora-num">N3</div><div class="mejora-cat" style="color:var(--amber)">UX · Premios · P2</div><div class="mejora-title">Destrabar el flujo de Premios (68.2% de inactividad)</div><div class="mejora-body">Es el segmento más atascado de junio, con 6,984 sesiones. El feedback lo confirma: "me enviaron un premio que no pedí", "quiero ver el premio que elegí". Mostrar estado del premio con foto y fecha, y habilitar reclamo en 1 tap.</div><div class="mejora-impact" style="background:rgba(251,191,36,.12);color:var(--amber)">Inactividad premios 68%→50%</div></div>
+
+    <div class="mejora-card" style="border-top:3px solid var(--amber)"><div class="mejora-num">N4</div><div class="mejora-cat" style="color:var(--amber)">Adopción · LOGUIN · P2</div><div class="mejora-title">Rescatar Marketplace en LOGUIN (6.7%)</div><div class="mejora-body">Mientras CARMEL sube a 12.2%, LOGUIN cae al mínimo del trimestre. Replicar en LOGUIN lo que funcionó en CARMEL (posición del catálogo, banner de campaña) y revisar su flujo de pedido: tiene la GPT-response más alta (30.7%).</div><div class="mejora-impact" style="background:rgba(251,191,36,.12);color:var(--amber)">Marketplace LOGUIN 6.7%→10%</div></div>
+
+    <div class="mejora-card" style="border-top:3px solid var(--amber)"><div class="mejora-num">N5</div><div class="mejora-cat" style="color:var(--amber)">UX · CARMEL · P2</div><div class="mejora-title">Auditar la experiencia CARMEL bajo mayor carga</div><div class="mejora-body">CARMEL creció +5.6% pero su inactividad saltó a 57.5% (+3.7pp) y concentra el 52% de los "no disponible" (1,315, +36%). El crecimiento está degradando la experiencia: dimensionar capacidad y revisar tiempos de respuesta en picos.</div><div class="mejora-impact" style="background:rgba(251,191,36,.12);color:var(--amber)">Sostener crecimiento sin fricción</div></div>
+
+    <div class="mejora-card" style="border-top:3px solid var(--blue)"><div class="mejora-num">N6</div><div class="mejora-cat" style="color:var(--blue)">Servicio · Post-venta · P3</div><div class="mejora-title">Notificación proactiva de despacho del pedido</div><div class="mejora-body">Petición literal y recurrente en la encuesta de junio: "quiero que me informes cuando el pedido se haya despachado". Conecta con E8 (tracking): un mensaje proactivo con guía y fecha estimada reduce consultas de estado (5,775 clics/mes).</div><div class="mejora-impact" style="background:rgba(79,142,247,.12);color:var(--blue)">↓ consultas de estado · ↑ confianza</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Hoja de ruta priorizada — julio 2026</div>
+    <table class="tbl">
+      <thead><tr><th>#</th><th>Acción</th><th>Área</th><th>Evidencia junio</th><th>Impacto esperado</th><th>Plazo</th><th>P</th></tr></thead>
+      <tbody>
+        <tr><td>N1</td><td>Definir/comunicar servicio dominical</td><td>Operaciones</td><td>3 domingos en cero · −9.7% volumen</td><td>Hasta 30K ses/mes</td><td>1 sem</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">P1</span></td></tr>
+        <tr><td>N2</td><td>Refuerzo agentes 12h–15h (reemplaza S3)</td><td>Operaciones</td><td>Pico "no disp." 14h · 2,817 casos</td><td>−40% sin atención</td><td>2 sem</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">P1</span></td></tr>
+        <tr><td>E1</td><td>Confirmación inmediata pedido texto</td><td>UX Bot</td><td>Inactividad 58.2% sin mejora</td><td>−30% inactividad pedidos</td><td>2 sem</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">P1</span></td></tr>
+        <tr><td>E3</td><td>Saludo proactivo personalizado</td><td>UX Bot</td><td>Abandono temprano 13.2% · 70.8% directo a agente</td><td>−40% abandono temprano</td><td>2 sem</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">P1</span></td></tr>
+        <tr><td>S2</td><td>Corregir HumanAttention (proveedor)</td><td>Datos</td><td>3er mes en False 100%</td><td>Reportes confiables</td><td>1 sem</td><td><span class="pill" style="background:rgba(248,113,113,.12);color:var(--red)">P1</span></td></tr>
+        <tr><td>E2</td><td>Replicar mejora GPT de CARMEL en PCFK/LOGUIN</td><td>UX Bot</td><td>CARMEL 22.4% vs LOGUIN 30.7%</td><td>GPT-resp global &lt;21%</td><td>4 sem</td><td><span class="pill" style="background:rgba(251,191,36,.12);color:var(--amber)">P2</span></td></tr>
+        <tr><td>N3</td><td>Destrabar flujo de Premios</td><td>UX Premios</td><td>68.2% inactividad · feedback textual</td><td>Inact. premios →50%</td><td>4 sem</td><td><span class="pill" style="background:rgba(251,191,36,.12);color:var(--amber)">P2</span></td></tr>
+        <tr><td>N4</td><td>Marketplace LOGUIN</td><td>Adopción</td><td>6.7% mínimo trimestre</td><td>LOGUIN →10%</td><td>3 sem</td><td><span class="pill" style="background:rgba(251,191,36,.12);color:var(--amber)">P2</span></td></tr>
+        <tr><td>N5</td><td>Auditoría experiencia CARMEL</td><td>Operaciones</td><td>Inact. 57.5% · no disp. +36%</td><td>Crecer sin fricción</td><td>3 sem</td><td><span class="pill" style="background:rgba(251,191,36,.12);color:var(--amber)">P2</span></td></tr>
+        <tr><td>S1</td><td>Ruta alternativa "no disponible"</td><td>Servicio</td><td>2,817 casos (+12%)</td><td>Recuperar 2,800/mes</td><td>3 sem</td><td><span class="pill" style="background:rgba(251,191,36,.12);color:var(--amber)">P2</span></td></tr>
+        <tr><td>E9</td><td>Encuesta al 3.5% de participación</td><td>Datos</td><td>2.37% recuperado</td><td>Muestra robusta CSAT</td><td>2 sem</td><td><span class="pill" style="background:rgba(79,142,247,.12);color:var(--blue)">P3</span></td></tr>
+        <tr><td>N6</td><td>Notificación proactiva de despacho</td><td>Servicio</td><td>Petición literal encuesta</td><td>↓ consultas estado</td><td>6 sem</td><td><span class="pill" style="background:rgba(79,142,247,.12);color:var(--blue)">P3</span></td></tr>
+        <tr><td>S9</td><td>Dashboard operativo semanal</td><td>Medición</td><td>Cambios detectados 4 sem tarde</td><td>Gestión proactiva</td><td>4 sem</td><td><span class="pill" style="background:rgba(79,142,247,.12);color:var(--blue)">P3</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ================================================================ CHAT ASISTENTE -->
+<div class="page" id="page-chat">
+  <div class="sec-head" style="margin-top:6px"><div class="sec-title">Asistente del Informe · Pregunta sobre los datos</div></div>
+  <div class="chat-wrap">
+    <div class="chat-box">
+      <div class="chat-head">
+        <div class="chat-avatar">📊</div>
+        <div>
+          <div class="chat-head-t">Analista CAMI · Abr–Jun 2026</div>
+          <div class="chat-head-s">Responde con las métricas de este informe · 504,642 conversaciones analizadas</div>
+        </div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="cmsg bot">¡Hola! 👋 Soy el asistente de este informe. Tengo cargadas todas las métricas de abril, mayo y junio de CAMI: volumen, marcas, agentes, encuesta, segmentos, funnel y el plan de acción.
+
+Pregúntame lo que necesites — por ejemplo, por qué cayó una marca, qué significa un indicador, o qué prioridad recomendarías para julio.</div>
+      </div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" rows="1" placeholder="Escribe tu pregunta sobre el informe…"></textarea>
+        <button class="chat-send" id="chatSend" onclick="sendChat()">Enviar</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-hd">Preguntas sugeridas</div>
+        <div class="sugg">
+          <span class="sugg-chip" onclick="askSugg(this)">¿Por qué cayó el volumen de PCFK en junio?</span>
+          <span class="sugg-chip" onclick="askSugg(this)">¿Cuál es el problema más urgente para julio?</span>
+          <span class="sugg-chip" onclick="askSugg(this)">Explícame qué significa "inactividad 3+"</span>
+          <span class="sugg-chip" onclick="askSugg(this)">¿Qué funciones usan más las asesoras y cuáles no?</span>
+          <span class="sugg-chip" onclick="askSugg(this)">¿Cómo va CARMEL comparado con las otras marcas?</span>
+          <span class="sugg-chip" onclick="askSugg(this)">¿Qué pasó con los domingos en junio?</span>
+          <span class="sugg-chip" onclick="askSugg(this)">Dame un resumen ejecutivo en 5 líneas</span>
+          <span class="sugg-chip" onclick="askSugg(this)">¿Qué dice la voz de la asesora en la encuesta?</span>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="card-hd">Cómo funciona</div>
+        <div style="font-size:.71rem;color:var(--muted);line-height:1.7">
+          El asistente consulta a Claude con <b style="color:var(--text)">todas las métricas de este informe precargadas</b> (los 3 meses, por marca, por segmento, agentes, encuesta y plan de acción). Responde únicamente con base en esos datos y aclara cuando algo no está en el informe.<br><br>
+          <b style="color:var(--amber)">⚠️ Requiere verse dentro de Claude:</b> si abres este HTML fuera de Claude (archivo descargado en el navegador), el chat no tendrá conexión y mostrará un aviso — el resto del informe funciona normal.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div>Informe completo sobre <strong>504,642 conversaciones reales</strong> · Abril + Mayo + Junio 2026 · Canal WhatsApp 573113494353 · CAMI Asistente Virtual</div>
+  <div>CARMEL · PACIFIKA · LOGUIN · Junio procesado sobre 162,176 chats (01–29 jun)</div>
+</div>
+
+<script>
+Chart.defaults.color='#5b6b84';
+Chart.defaults.borderColor='#e5e9f2';
+Chart.defaults.font.family='Plus Jakarta Sans';
+const blue='#4f8ef7',pink='#f472b6',teal='#2dd4bf',amber='#fbbf24',purple='#a78bfa',orange='#fb923c',red='#f87171',green='#34d399',cami='#1ec4d0';
+const C_ABR='#a78bfa', C_MAY='#4f8ef7', C_JUN='#34d399';
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.tab-btn,.bnav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  window.scrollTo({top:0,behavior:'instant'});
+  const bb=document.querySelector('.bnav-btn.active');
+  if(bb)bb.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+}
+
+/* ── FILTRO GLOBAL DE MESES ── */
+const monthsOn={abr:true,may:true,jun:true};
+const monthCharts=[];  // {chart, months:[...] aligned to datasets}
+function regMC(chart,months){monthCharts.push({chart,months});}
+function toggleMonth(m){
+  monthsOn[m]=!monthsOn[m];
+  document.getElementById('chip-'+m).classList.toggle('off',!monthsOn[m]);
+  document.body.classList.toggle('no-'+m,!monthsOn[m]);
+  monthCharts.forEach(({chart,months})=>{
+    months.forEach((mm,i)=>{ if(mm) chart.data.datasets[i].hidden=!monthsOn[mm]; });
+    chart.update();
+  });
+  document.querySelectorAll('.cmp-row').forEach(r=>{
+    ['abr','may','jun'].forEach(mm=>r.classList.toggle('hidden-'+mm,!monthsOn[mm]));
+  });
+}
+
+/* ── RESUMEN (Junio) ── */
+new Chart(document.getElementById('weeklyBarR'),{type:'bar',data:{labels:['Jun 01–07','Jun 08–14','Jun 15–21','Jun 22–29'],datasets:[
+ {label:'CARMEL',data:[16159,16895,14907,15315],backgroundColor:'rgba(251,146,60,.75)',borderColor:orange,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'PCFK',data:[9885,8931,9501,9675],backgroundColor:'rgba(167,139,250,.75)',borderColor:purple,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'LOGUIN',data:[8715,8566,7230,9210],backgroundColor:'rgba(45,212,191,.75)',borderColor:teal,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Sin marca',data:[5229,5459,6270,10229],backgroundColor:'rgba(100,116,139,.3)',borderColor:'#64748b',borderWidth:1,borderRadius:5,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}});
+new Chart(document.getElementById('brandDonutR'),{type:'doughnut',data:{labels:['CARMEL','PCFK','LOGUIN','Sin marca'],datasets:[{data:[63276,37992,33721,27187],backgroundColor:['rgba(251,146,60,.8)','rgba(167,139,250,.8)','rgba(45,212,191,.8)','rgba(100,116,139,.4)'],borderColor:[orange,purple,teal,'#64748b'],borderWidth:2}]},options:{cutout:'68%',plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('menuBarR'),{type:'bar',data:{labels:['Pedidos','Texto ped.','Premios','Menú Ppal','Agente 👤','Catálogo','Cupo/Saldo','Remisión','Est.Pedido','Cambios'],datasets:[{data:[144091,54005,32088,28339,14133,13826,11340,10611,5775,4911],backgroundColor:[blue,blue,purple,'#334155',red,amber,teal,teal,teal,pink].map(c=>c+'bb'),borderColor:[blue,blue,purple,'#334155',red,amber,teal,teal,teal,pink],borderWidth:1.5,borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}},y:{ticks:{color:'#1e2a3d',font:{size:9}},grid:{display:false}}}}});
+new Chart(document.getElementById('orderTypeR'),{type:'doughnut',data:{labels:['Texto','Imagen','Audio'],datasets:[{data:[54005,5499,1442],backgroundColor:['rgba(79,142,247,.8)','rgba(244,114,182,.8)','rgba(251,191,36,.8)'],borderColor:[blue,pink,amber],borderWidth:2}]},options:{cutout:'65%',plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('closeDonutR'),{type:'doughnut',data:{labels:['CloseSession','CloseFromCore','SurveyClose','Falla/Timeout'],datasets:[{data:[46889,15099,2457,1716],backgroundColor:['rgba(52,211,153,.8)','rgba(79,142,247,.8)','rgba(167,139,250,.8)','rgba(248,113,113,.8)'],borderColor:[green,blue,purple,red],borderWidth:2}]},options:{cutout:'65%',plugins:{legend:{display:false}}}});
+
+/* ── COMPARATIVO ── */
+const cmpData=[
+ {m:'Total sesiones',a:'162,838',b:'179,628',c:'162,176',av:162838,bv:179628,cv:162176,t:'higher-better'},
+ {m:'Sesiones por día activo',a:'5,428',b:'5,795',c:'6,237',av:5428,bv:5795,cv:6237,t:'higher-better'},
+ {m:'Inactividad 3+ msgs',a:'55.8%',b:'58.9%',c:'58.2%',av:55.8,bv:58.9,cv:58.2,t:'lower-better'},
+ {m:'Duración promedio',a:'28.6 min',b:'28.4 min',c:'29.8 min',av:28.6,bv:28.4,cv:29.8,t:'lower-better'},
+ {m:'Uso Marketplace',a:'10.7%',b:'9.1%',c:'9.7%',av:10.7,bv:9.1,cv:9.7,t:'higher-better'},
+ {m:'Solicitudes agente',a:'9.9%',b:'9.0%',c:'8.3%',av:9.9,bv:9.0,cv:8.3,t:'lower-better'},
+ {m:'Transferencias a humano',a:'2,187',b:'1,735',c:'4,842',av:2187,bv:1735,cv:4842,t:'higher-better'},
+ {m:'Agente no disponible',a:'2,316',b:'2,513',c:'2,817',av:2316,bv:2513,cv:2817,t:'lower-better'},
+ {m:'ChatGPT-response %',a:'22.4%',b:'23.9%',c:'23.2%',av:22.4,bv:23.9,cv:23.2,t:'lower-better'},
+ {m:'CSAT "Fácil"',a:'88.4%',b:'88.8%',c:'87.4%',av:88.4,bv:88.8,cv:87.4,t:'higher-better'},
+ {m:'Respuestas encuesta',a:'5,517',b:'1,236',c:'3,851',av:5517,bv:1236,cv:3851,t:'higher-better'},
+ {m:'Participación encuesta',a:'3.39%',b:'0.69%',c:'2.37%',av:3.39,bv:0.69,cv:2.37,t:'higher-better'},
+];
+const tblC=document.getElementById('cmpTableC');
+cmpData.forEach(row=>{
+  const bMax=Math.max(row.av,row.bv,row.cv);
+  const pA=row.av/bMax*100,pB=row.bv/bMax*100,pC=row.cv/bMax*100;
+  let delta='',dc='delta-neut';
+  if(row.t!=='neutral'){
+    const d=((row.cv-row.bv)/row.bv*100);
+    const better=(row.t==='higher-better'&&d>0)||(row.t==='lower-better'&&d<0);
+    delta=(d>0?'▲':'▼')+Math.abs(d).toFixed(1)+'%';
+    dc=better?'delta-up':'delta-down';
+    if(Math.abs(d)<0.5)dc='delta-neut';
+  }
+  tblC.innerHTML+=`<div class="cmp-row">
+    <div class="cmp-metric">${row.m}</div>
+    <div class="cmp-bar-wrap col-abr"><div class="cmp-bar" style="width:${pA}%;background:${C_ABR};opacity:.75"></div><span class="cmp-num" style="color:${C_ABR}">${row.a}</span></div>
+    <div class="cmp-bar-wrap col-may"><div class="cmp-bar" style="width:${pB}%;background:${C_MAY};opacity:.75"></div><span class="cmp-num" style="color:${C_MAY}">${row.b}</span></div>
+    <div class="cmp-bar-wrap col-jun"><div class="cmp-bar" style="width:${pC}%;background:${C_JUN};opacity:.75"></div><span class="cmp-num" style="color:${C_JUN}">${row.c}</span></div>
+    <div><span class="cmp-delta ${dc}">${delta||'—'}</span></div></div>`;
+});
+const wk12=['A1','A2','A3','A4','M1','M2','M3','M4','J1','J2','J3','J4'];
+regMC(new Chart(document.getElementById('brandEvol12'),{type:'line',data:{labels:wk12,datasets:[
+ {label:'CARMEL',data:[13241,11987,13898,15726,14561,12586,13872,18916,16159,16895,14907,15315],borderColor:orange,backgroundColor:'transparent',tension:.4,pointRadius:3,pointBackgroundColor:orange,borderWidth:2},
+ {label:'PCFK',data:[10564,9783,11214,12166,10671,11106,10063,14618,9885,8931,9501,9675],borderColor:purple,backgroundColor:'transparent',tension:.4,pointRadius:3,pointBackgroundColor:purple,borderWidth:2},
+ {label:'LOGUIN',data:[8940,8014,10213,10049,8687,8677,9996,11796,8715,8566,7230,9210],borderColor:teal,backgroundColor:'transparent',tension:.4,pointRadius:3,pointBackgroundColor:teal,borderWidth:2}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b',font:{size:8.5}},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}}),[null,null,null]);
+
+/* ── VOLUMEN ── */
+regMC(new Chart(document.getElementById('weekly12C'),{type:'bar',data:{labels:wk12,datasets:[
+ {label:'Abril',data:[34573,31924,42421,53920,null,null,null,null,null,null,null,null],backgroundColor:C_ABR+'88',borderColor:C_ABR,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Mayo',data:[null,null,null,null,42186,40386,40726,56330,null,null,null,null],backgroundColor:C_MAY+'88',borderColor:C_MAY,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Junio',data:[null,null,null,null,null,null,null,null,39988,39851,37908,44429],backgroundColor:C_JUN+'88',borderColor:C_JUN,borderWidth:1.5,borderRadius:5,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b',font:{size:8.5}},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+const hAbr=[729,264,158,147,273,768,1989,4253,11967,11793,10822,10517,8943,9652,10323,10611,10840,10825,11071,11805,10122,8134,4779,2053];
+const hMay=[953,341,172,127,354,900,2361,4634,13590,12571,12489,11612,10337,10598,11272,11615,11686,11762,12002,12984,11058,8280,5414,2516];
+const hJun=[711,228,111,114,221,730,1916,3988,11736,10712,11130,10878,9364,9278,10785,10948,10608,10988,10737,11632,10225,8052,4882,2202];
+regMC(new Chart(document.getElementById('hourCmpC'),{type:'line',data:{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[
+ {label:'Abril',data:hAbr,borderColor:C_ABR,backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2},
+ {label:'Mayo',data:hMay,borderColor:C_MAY,backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2},
+ {label:'Junio',data:hJun,borderColor:C_JUN,backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+regMC(new Chart(document.getElementById('wdayCmpC'),{type:'bar',data:{labels:['Lun','Mar','Mier','Jue','Vie','Sáb','Dom'],datasets:[
+ {label:'Abril',data:[30010,31597,34850,25855,16526,12526,11474],backgroundColor:C_ABR+'88',borderColor:C_ABR,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Mayo',data:[27033,32164,29060,27183,29286,20671,14231],backgroundColor:C_MAY+'88',borderColor:C_MAY,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Junio',data:[28669,31376,29516,27903,26181,16296,2235],backgroundColor:C_JUN+'88',borderColor:C_JUN,borderWidth:1.5,borderRadius:5,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#1e2a3d'},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+(function(){
+  const wdJun=[28669,31376,29516,27903,26181,16296,2235],dayNames=['Lun','Mar','Mier','Jue','Vie','Sáb','Dom'],total=162176;
+  const container=document.getElementById('heatmapGridV');
+  const grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:42px repeat(24,1fr);gap:2px;align-items:center';
+  grid.innerHTML='<div></div>'+Array.from({length:24},(_,i)=>`<div style="font-size:.44rem;color:#8a97ad;text-align:center">${i.toString().padStart(2,'0')}</div>`).join('');
+  dayNames.forEach((day,di)=>{
+    const lbl=document.createElement('div');lbl.style.cssText='font-size:.57rem;color:#64748b;text-align:right;padding-right:4px';lbl.textContent=day;grid.appendChild(lbl);
+    for(let h=0;h<24;h++){
+      const v=Math.round(total*(wdJun[di]/total)*(hJun[h]/total)*7);
+      const intensity=Math.min(1,v/400);
+      const cell=document.createElement('div');
+      cell.style.cssText=`height:18px;border-radius:2px;background:${cami};opacity:${0.06+intensity*0.84}`;
+      cell.title=`${day} ${h.toString().padStart(2,'0')}h ≈ ${v.toLocaleString()}`;
+      grid.appendChild(cell);
+    }
+  });
+  container.appendChild(grid);
+})();
+
+/* ── AGENTE ── */
+regMC(new Chart(document.getElementById('agentOutcomeC'),{type:'bar',data:{labels:['Transferido','No disponible','Redirigido bot'],datasets:[
+ {label:'Abril',data:[2187,2316,11559],backgroundColor:C_ABR+'88',borderColor:C_ABR,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Mayo',data:[1735,2513,12003],backgroundColor:C_MAY+'88',borderColor:C_MAY,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Junio',data:[4842,2817,10666],backgroundColor:C_JUN+'88',borderColor:C_JUN,borderWidth:1.5,borderRadius:5,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#1e2a3d',font:{size:9.5}},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+const naAbr=[36,5,3,3,16,35,180,39,62,77,99,66,86,59,75,86,73,74,64,105,484,312,204,73];
+const naMay=[25,18,12,2,13,48,168,30,86,98,102,102,89,75,83,84,70,77,53,106,548,324,212,88];
+const naJun=[0,0,0,0,0,0,5,82,178,177,215,224,256,250,285,266,227,241,231,180,0,0,0,0];
+regMC(new Chart(document.getElementById('noAvailHourC'),{type:'line',data:{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[
+ {label:'Abril',data:naAbr,borderColor:C_ABR,backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2},
+ {label:'Mayo',data:naMay,borderColor:C_MAY,backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2},
+ {label:'Junio',data:naJun,borderColor:C_JUN,backgroundColor:'transparent',tension:.4,pointRadius:2,borderWidth:2}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b',font:{size:8}},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+regMC(new Chart(document.getElementById('noAvailBrandC'),{type:'bar',data:{labels:['CARMEL','PCFK','LOGUIN'],datasets:[
+ {label:'Abril',data:[838,715,491],backgroundColor:C_ABR+'88',borderColor:C_ABR,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Mayo',data:[965,684,521],backgroundColor:C_MAY+'88',borderColor:C_MAY,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Junio',data:[1315,727,473],backgroundColor:C_JUN+'88',borderColor:C_JUN,borderWidth:1.5,borderRadius:5,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#1e2a3d'},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+const trJun=[0,0,0,0,0,0,0,185,359,462,571,506,398,365,413,469,401,340,197,176,0,0,0,0];
+new Chart(document.getElementById('agentHourJ2'),{type:'bar',data:{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[
+ {label:'Transferidos',data:trJun,backgroundColor:green+'99',borderColor:green,borderWidth:1,borderRadius:3,borderSkipped:false},
+ {label:'No disponible',data:naJun,backgroundColor:red+'99',borderColor:red,borderWidth:1,borderRadius:3,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b',font:{size:7.5}},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}});
+
+/* ── MARCA ── */
+regMC(new Chart(document.getElementById('brandInactC'),{type:'bar',data:{labels:['CARMEL','PCFK','LOGUIN'],datasets:[
+ {label:'Abril',data:[51.0,50.6,51.5],backgroundColor:C_ABR+'88',borderColor:C_ABR,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Mayo',data:[53.8,53.5,54.5],backgroundColor:C_MAY+'88',borderColor:C_MAY,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Junio',data:[57.5,52.8,53.4],backgroundColor:C_JUN+'88',borderColor:C_JUN,borderWidth:1.5,borderRadius:5,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#1e2a3d'},grid:{display:false}},y:{min:45,max:60,ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+regMC(new Chart(document.getElementById('brandMktC'),{type:'bar',data:{labels:['CARMEL','PCFK','LOGUIN'],datasets:[
+ {label:'Abril',data:[11.0,11.6,9.8],backgroundColor:C_ABR+'88',borderColor:C_ABR,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Mayo',data:[9.8,9.2,8.4],backgroundColor:C_MAY+'88',borderColor:C_MAY,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Junio',data:[12.2,8.5,6.7],backgroundColor:C_JUN+'88',borderColor:C_JUN,borderWidth:1.5,borderRadius:5,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#1e2a3d'},grid:{display:false}},y:{min:0,max:15,ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+regMC(new Chart(document.getElementById('brandGptC'),{type:'bar',data:{labels:['CARMEL','PCFK','LOGUIN'],datasets:[
+ {label:'Abril',data:[26.4,26.1,27.4],backgroundColor:C_ABR+'88',borderColor:C_ABR,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Mayo',data:[28.2,29.1,29.4],backgroundColor:C_MAY+'88',borderColor:C_MAY,borderWidth:1.5,borderRadius:5,borderSkipped:false},
+ {label:'Junio',data:[22.4,29.4,30.7],backgroundColor:C_JUN+'88',borderColor:C_JUN,borderWidth:1.5,borderRadius:5,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#1e2a3d'},grid:{display:false}},y:{min:18,max:35,ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'#e5e9f2'}}}}}),['abr','may','jun']);
+
+/* ── FLUJO ── */
+(function(){
+  const steps=[{label:'Inician conversación',users:162176,color:blue},{label:'Pasan autenticación',users:137780,color:blue},{label:'Llegan al menú',users:131551,color:amber},{label:'Inician pedido',users:66181,color:orange},{label:'Completado (proxy)',users:25452,color:red}];
+  const maxU=steps[0].users;const container=document.getElementById('funnelVizF');
+  steps.forEach((s,i)=>{const pct=s.users/maxU*100;const drop=i>0?Math.round((steps[i-1].users-s.users)/steps[i-1].users*100):0;
+  container.innerHTML+=`<div class="funnel-step"><div class="funnel-label">${s.label}</div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${pct}%;background:${s.color}cc"><span style="color:#fff">${s.users.toLocaleString()}</span></div></div><div class="funnel-meta">${pct.toFixed(1)}%${i>0?'<br><span class="funnel-drop">▼'+drop+'%</span>':''}</div></div>`;});
+})();
+new Chart(document.getElementById('flowStepF'),{type:'bar',data:{labels:['CloseSession','ChatGPT-resp','CloseFromCore','RememberBrand','PersonDoc','CatalogSuccess','InitialMenu','SurveyQ0'],datasets:[{data:[46889,37702,15099,7549,6614,5630,5466,3097],backgroundColor:[green,red,blue,purple,amber,teal,teal,purple].map(c=>c+'99'),borderColor:[green,red,blue,purple,amber,teal,teal,purple],borderWidth:1.5,borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}},y:{ticks:{color:'#1e2a3d',font:{size:9}},grid:{display:false}}}}});
+new Chart(document.getElementById('durByFlowF'),{type:'bar',data:{labels:['ChatGPT-resp','CloseFromCore','PersonDoc','CatalogSuccess','InitialMenu','RememberBrand','QuotaSales','SurveyQ0','SurveyClose','CloseSession'],datasets:[{data:[40.1,51.0,34.1,33.2,35.1,31.0,32.4,34.3,19.7,9.8],backgroundColor:[red,red,amber,amber,amber,amber,amber,amber,teal,green].map(c=>c+'99'),borderColor:[red,red,amber,amber,amber,amber,amber,amber,teal,green],borderWidth:1.5,borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',callback:v=>v+'m'},grid:{color:'#e5e9f2'}},y:{ticks:{color:'#1e2a3d',font:{size:9}},grid:{display:false}}}}});
+new Chart(document.getElementById('inactF'),{type:'bar',data:{labels:['Sin inactividad (0 msgs)','Con inactividad (3 msgs)'],datasets:[{data:[67746,94430],backgroundColor:[green+'cc',red+'cc'],borderColor:[green,red],borderWidth:2,borderRadius:7,borderSkipped:false}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#1e2a3d'},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}});
+regMC(new Chart(document.getElementById('closeCompF'),{type:'bar',data:{labels:['CloseSession','CloseFromCore','SurveyClose','OutOfTime','NotPerson','Fail'],datasets:[
+ {label:'Abril',data:[47542,16541,2854,1020,836,161],backgroundColor:C_ABR+'88',borderColor:C_ABR,borderWidth:1.5,borderRadius:4},
+ {label:'Mayo',data:[51576,15578,2932,870,682,415],backgroundColor:C_MAY+'88',borderColor:C_MAY,borderWidth:1.5,borderRadius:4},
+ {label:'Junio',data:[46889,15099,2457,859,602,255],backgroundColor:C_JUN+'88',borderColor:C_JUN,borderWidth:1.5,borderRadius:4}
+]},options:{indexAxis:'y',responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}},y:{ticks:{color:'#1e2a3d',font:{size:9}},grid:{display:false}}}}}),['abr','may','jun']);
+
+/* ── SATISFACCIÓN ── */
+new Chart(document.getElementById('csatS'),{type:'doughnut',data:{labels:['Fácil','Difícil'],datasets:[{data:[3367,484],backgroundColor:['rgba(52,211,153,.8)','rgba(248,113,113,.8)'],borderColor:[green,red],borderWidth:2}]},options:{cutout:'68%',plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('surveyLine'),{type:'line',data:{labels:wk12,datasets:[{label:'Respuestas encuesta',data:[1284,1091,1452,1690,301,298,286,351,995,946,877,1033],borderColor:teal,backgroundColor:'rgba(45,212,191,.1)',tension:.4,fill:true,pointRadius:5,pointBackgroundColor:teal,borderWidth:2}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}});
+
+/* ── SEGMENTOS ── */
+const SEGS=[
+ {n:'Solo Pedido',v:59941,p:'37.0%',inact:'55.0%',dur:'28.6m',msgs:'24.6',c:blue,tag:'Corazón del canal',tagc:'rgba(79,142,247,.12)'},
+ {n:'Mixta (2+ funciones)',v:28163,p:'17.4%',inact:'54.2%',dur:'29.1m',msgs:'27.1',c:cami,tag:'Usuarias avanzadas',tagc:'rgba(30,196,208,.12)'},
+ {n:'Solo Navegación',v:23413,p:'14.4%',inact:'57.1%',dur:'33.3m',msgs:'19.7',c:'#5b6b84',tag:'Sin acción concreta',tagc:'rgba(148,163,184,.12)'},
+ {n:'Abandono Temprano',v:21337,p:'13.2%',inact:'91.6%',dur:'—',msgs:'5.1',c:red,tag:'Se van en <3 mensajes',tagc:'rgba(248,113,113,.12)'},
+ {n:'Solo Agente',v:8337,p:'5.1%',inact:'13.8%',dur:'44.1m',msgs:'33.5',c:pink,tag:'Crece con la nueva capacidad',tagc:'rgba(244,114,182,.12)'},
+ {n:'Solo Cupo',v:7112,p:'4.4%',inact:'52.7%',dur:'19.8m',msgs:'17.2',c:teal,tag:'Consulta rápida',tagc:'rgba(45,212,191,.12)'},
+ {n:'Premios',v:6984,p:'4.3%',inact:'68.2%',dur:'28.9m',msgs:'19.1',c:amber,tag:'⚠️ El más atascado',tagc:'rgba(251,191,36,.12)'},
+ {n:'Solo Estado/Remisión',v:5672,p:'3.5%',inact:'60.4%',dur:'23.4m',msgs:'20.0',c:purple,tag:'Post-venta',tagc:'rgba(167,139,250,.12)'},
+ {n:'Pedido + Agente',v:1217,p:'0.8%',inact:'17.9%',dur:'44.7m',msgs:'35.3',c:orange,tag:'Las más frustradas',tagc:'rgba(251,146,60,.12)'},
+];
+const sg=document.getElementById('segGrid');
+SEGS.forEach(s=>{
+  sg.innerHTML+=`<div class="seg-card" style="background:${s.tagc.replace('.12','.05')};border-color:${s.c}33">
+   <div class="seg-num" style="color:${s.c}">${s.v.toLocaleString()}</div>
+   <div class="seg-pct" style="color:${s.c}">${s.p} de las sesiones</div>
+   <div class="seg-name">${s.n}</div>
+   <div class="seg-meta">Inactividad: <b>${s.inact}</b> · Duración: <b>${s.dur}</b> · Msgs/chat: <b>${s.msgs}</b></div>
+   <span class="seg-tag" style="background:${s.tagc};color:${s.c}">${s.tag}</span></div>`;
+});
+new Chart(document.getElementById('segInactS'),{type:'bar',data:{labels:['Aband.','Premios','Estado','Nav.','S.Pedido','Mixta','S.Cupo','Ped+Ag','S.Agente'],datasets:[
+ {label:'Inactividad %',data:[91.6,68.2,60.4,57.1,55.0,54.2,52.7,17.9,13.8],backgroundColor:red+'88',borderColor:red,borderWidth:1.5,borderRadius:4,borderSkipped:false,yAxisID:'y'},
+ {label:'Duración (min)',data:[28.9,28.9,23.4,33.3,28.6,29.1,19.8,44.7,44.1],backgroundColor:blue+'88',borderColor:blue,borderWidth:1.5,borderRadius:4,borderSkipped:false,yAxisID:'y2'}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b',font:{size:8.5}},grid:{display:false}},y:{ticks:{color:red,callback:v=>v+'%'},grid:{color:'#e5e9f2'}},y2:{position:'right',ticks:{color:blue,callback:v=>v+'m'},grid:{display:false}}}}});
+
+/* ── JORNADA ── */
+function buildJ(id,steps){
+  const el=document.getElementById(id);
+  steps.forEach((s,i)=>{
+    if(i>0){const a=document.createElement('div');a.className='j-arrow';a.innerHTML=`→${s.drop?`<div class="j-drop">▼${s.drop}</div>`:''}`;el.appendChild(a);}
+    const st=document.createElement('div');st.className='j-step';st.style.borderTop=`3px solid ${s.color}`;
+    st.innerHTML=`<span class="j-step-icon">${s.icon}</span><span class="j-step-name" style="color:${s.color}">${s.name}</span><div class="j-step-pct">${s.meta}</div>`;el.appendChild(st);
+  });
+}
+buildJ('jP1',[{icon:'👋',name:'Auth',meta:'85% pasa',color:green},{icon:'📋',name:'Elige Pedidos',meta:'40.8% inicia',color:blue},{icon:'✍️',name:'Envía texto',meta:'88.6% texto',color:amber},{icon:'⏳',name:'GPT procesa',meta:'Aquí se atasca',color:orange,drop:'mayor caída'},{icon:'✅',name:'Cierre limpio',meta:'~38% de inicios',color:green}]);
+buildJ('jP2',[{icon:'👋',name:'Entra CAMI',meta:'8,337 ses.',color:pink},{icon:'👤',name:'Toca Agente',meta:'70.8% directo',color:red},{icon:'🤖',name:'Bot responde',meta:'3 rutas',color:amber},{icon:'✅',name:'Transferido',meta:'4,842/mes ×2.8',color:green},{icon:'❌',name:'No disponible',meta:'2,817 (20.8%)',color:red},{icon:'↩️',name:'Bot de nuevo',meta:'78.9%',color:'#64748b'}]);
+buildJ('jP3',[{icon:'🛍️',name:'Hace pedido',meta:'Inicia flujo',color:blue},{icon:'😤',name:'Algo falla',meta:'"código no válido"',color:orange},{icon:'👤',name:'Pide agente',meta:'Escala',color:red},{icon:'⏱️',name:'44.7 min',meta:'Sesión larga',color:amber},{icon:'📉',name:'1,217 casos',meta:'0.8% del total',color:red}]);
+new Chart(document.getElementById('agentHourJ'),{type:'bar',data:{labels:Array.from({length:24},(_,i)=>i+'h'),datasets:[
+ {label:'Transferidos',data:trJun,backgroundColor:green+'99',borderColor:green,borderWidth:1,borderRadius:3,borderSkipped:false},
+ {label:'No disponible',data:naJun,backgroundColor:red+'99',borderColor:red,borderWidth:1,borderRadius:3,borderSkipped:false}
+]},options:{responsive:true,plugins:{legend:{labels:{color:'#5b6b84',font:{size:9}}}},scales:{x:{ticks:{color:'#64748b',font:{size:7.5}},grid:{display:false}},y:{ticks:{color:'#64748b'},grid:{color:'#e5e9f2'}}}}});
+new Chart(document.getElementById('beforeAgentJ'),{type:'bar',data:{labels:['Directo a agente','Otra función','Intentó pedido','Consultó estado','Consultó cupo','Revisó premios'],datasets:[{data:[70.8,11.5,6.1,4.5,4.0,3.0],backgroundColor:[pink,'#5b6b84',orange,blue,teal,purple].map(c=>c+'99'),borderColor:[pink,'#5b6b84',orange,blue,teal,purple],borderWidth:1.5,borderRadius:5,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{min:0,max:100,ticks:{color:'#64748b',callback:v=>v+'%'},grid:{color:'#e5e9f2'}},y:{ticks:{color:'#1e2a3d',font:{size:9.5}},grid:{display:false}}}}});
+
+/* ══════════════ CHAT ASISTENTE DEL INFORME ══════════════ */
+const REPORT_CONTEXT = `Eres el asistente analista de este informe ejecutivo de CAMI, el asistente virtual de WhatsApp para asesoras de venta directa de las marcas CARMEL, PACIFIKA (PCFK) y LOGUIN. Canal 573113494353. Informe: abril, mayo y junio 2026 (504,642 conversaciones).
+
+REGLAS: Responde SOLO con base en los datos de abajo. Si algo no está aquí, dilo claramente y sugiere cómo obtenerlo. Responde en español, conciso y accionable, para una audiencia de negocio. Usa cifras exactas del informe. Máximo ~150 palabras salvo que pidan detalle.
+
+=== TOTALES POR MES ===
+Sesiones: Abr 162,838 | May 179,628 | Jun 162,176 (jun: solo 26 días activos, datos 01-29 jun, export sin jun 30)
+Sesiones/día activo: Abr 5,428 | May 5,795 | Jun 6,237 (+7.6% — la demanda diaria SUBIÓ pese a menor total)
+Semanas Jun: 39,988 / 39,851 / 37,908 / 44,429 (pico semana 4, cierre campaña)
+Usuarias únicas Jun: 54,433 (~3.0 sesiones/asesora) · 84.5% recurrentes reconocidas
+Domingos JUNIO: 7, 14 y 21 con CERO sesiones (canal apagado); solo dom 28 operó (2,235). Costo estimado ~30K sesiones/mes. Máxima prioridad aclarar si fue deliberado.
+Día pico: Martes (31,376 jun). Horas pico jun: 08h (11,736) y 19h (11,632). Valle 02h.
+Tráfico L-V jun: 88.6% (subió desde 81%) por apagón dominical.
+
+=== FRICCIÓN / INACTIVIDAD ===
+Inactividad 3+ mensajes (asesora deja de responder y recibe 3 recordatorios): Abr 55.8% | May 58.9% | Jun 58.2% (94,430 chats). Es BINARIA: 0 o 3, nunca gradual → quiebre estructural en flujo de pedido.
+Duración promedio: Abr 28.6m | May 28.4m | Jun 29.8m (mediana 30m). Msgs/chat jun: 21.6.
+
+=== FUNNEL PEDIDOS JUNIO (metodología: medición directa de mensajes) ===
+Inician 162,176 → pasan autenticación 137,780 (85%) → llegan a menú 131,551 (81%) → inician pedido 66,181 (40.8%) → completado proxy 25,452 (15.7%). Proxy = inició pedido + cerró sesión limpia sin inactividad. ~61.5% de quienes inician pedido lo abandonan.
+Tipo de pedido jun: Texto 54,005 (88.6%) | Imagen 5,499 (9.0%) | Audio 1,442 (2.4%).
+ChatGPT-response (sesiones que terminan en respuesta GPT sin resolución): Abr 22.4% | May 23.9% | Jun 23.2%.
+
+=== MARCAS (Abr | May | Jun) ===
+CARMEL sesiones: 54,852 | 59,935 | 63,276 (+5.6%, única que crece). Inactividad: 51.0 | 53.8 | 57.5% (EMPEORA con el crecimiento). Marketplace: 11.0 | 9.8 | 12.2% (líder). GPT-resp: 26.4 | 28.2 | 22.4% (GRAN MEJORA jun). Agente no disp: 838 | 965 | 1,315 (+36%, concentra 52% del total).
+PCFK: 43,727 | 46,458 | 37,992 (−18.2% jun; posible calendario de campaña — validar con negocio). Inactividad 50.6 | 53.5 | 52.8% (la mejor). Marketplace 11.6 | 9.2 | 8.5%. GPT-resp 26.1 | 29.1 | 29.4%. No disp 715 | 684 | 727.
+LOGUIN: 37,216 | 39,156 | 33,721 (−13.9%). Inactividad 51.5 | 54.5 | 53.4%. Marketplace 9.8 | 8.4 | 6.7% (MÍNIMO trimestre). GPT-resp 27.4 | 29.4 | 30.7% (la peor: flujo menos resolutivo). No disp 491 | 521 | 473.
+Sin marca jun: 27,187 (16.8%).
+Marketplace global: Abr 10.7% | May 9.1% | Jun 9.7% (15,763) — repunte solo por CARMEL.
+
+=== ATENCIÓN HUMANA ===
+Campo HumanAttention=False en el 100% de registros los 3 meses (defecto del proveedor, iniciativa S2 pendiente). Medición real por mensajes:
+Solicitudes botón "Agente": Abr 9.9% | May 9.0% (16,251) | Jun 8.3% (13,522) — baja 3 meses seguidos.
+Transferencias efectivas a humano: Abr 2,187 | May 1,735 | Jun 4,842 (×2.8 — el cambio operativo más grande del trimestre; jun medido por mensaje real "te estoy transfiriendo" en TODAS las rutas: botón, escalamiento GPT, radicaciones).
+Agente no disponible: Abr 2,316 | May 2,513 | Jun 2,817 (+12%). CAMBIO CLAVE JUN: el pico migró de 20h (nocturno) a 14h (285 casos); la opción de agente ahora solo se ofrece 7h-19h, el problema es capacidad en horas hábiles (franja 12h-15h = 36% de casos, patrón de relevo de almuerzo).
+Redirigidos al bot: Jun 10,666 (78.9% de solicitudes).
+Antes de pedir agente (jun): 70.8% va directo sin probar nada (may: 89.2%, mejoró 18pp) | otra función 11.5% | intentó pedido 6.1% | estado 4.5% | cupo 4.0% | premios 3.0%.
+
+=== ENCUESTA / CSAT ===
+Respuestas: Abr 5,517 (3.39%) | May 1,236 (0.69%, caída crítica) | Jun 3,851 (2.37%, RECUPERACIÓN ×3.1 — iniciativa E9 funcionó; meta 3.5%).
+CSAT "Fácil": Abr 88.4% | May 88.8% | Jun 87.4% (3,367 fácil / 484 difícil; leve baja pero con 3× más muestra, más representativo).
+NPS: Abr 59, May 61 (estimados informe anterior); Jun n/d (metodología no replicable con el dato disponible).
+Voz de la asesora jun (textual): POSITIVO "Muy fácil y buena atención", "Todo salió bien". MEJORAS: "Quiero ingresar pedido y me dicen código no válido o no existe", "Quiero que me informes cuando el pedido se haya despachado", "Me enviaron un premio que no pedí", "El pedido de campaña 9 no ha llegado", "Las respuestas que dan no resuelven mi duda", "Me digitaron mal los códigos".
+
+=== USO DEL MENÚ JUNIO (clics) ===
+Pedidos 144,091 | Texto pedido 54,005 | Premios 32,088 | Menú principal 28,339 | Agente 14,133 | Catálogo 13,826 | Cupo/Saldo 11,340 | Remisión 10,611 | Estado pedido 5,775 | Cambios 4,911.
+Lo MÁS usado: pedidos (aplastante). Lo MENOS usado: cambios/devoluciones y estado de pedido (aunque hay demanda latente de tracking según encuesta).
+
+=== SEGMENTOS JUNIO (recalculados sobre mensajes; comparación con Abr-May es direccional) ===
+Solo Pedido 59,941 (37.0%) inact 55.0% dur 28.6m | Mixta 28,163 (17.4%) 54.2% 29.1m | Solo Navegación 23,413 (14.4%) 57.1% 33.3m | Abandono Temprano 21,337 (13.2%) 91.6% <3 msgs | Solo Agente 8,337 (5.1%) 13.8% 44.1m (crece con nueva capacidad) | Solo Cupo 7,112 (4.4%) 52.7% | PREMIOS 6,984 (4.3%) 68.2% inactividad — EL MÁS ATASCADO, hallazgo nuevo jun | Solo Estado 5,672 (3.5%) 60.4% | Pedido+Agente 1,217 (0.8%) 44.7m, las más frustradas.
+
+=== CIERRES JUNIO ===
+CloseSession 46,889 (70.9% de cierres) | CloseFromCore 15,099 | SurveyClose 2,457 | OutOfTime 859 | NotPerson 602 | Fail 255. Duración por flow: GPT-resp 40.1m, CloseFromCore 51m, CloseSession 9.8m.
+
+=== PLAN DE ACCIÓN (estado tras junio) ===
+✅ Avanzaron: E9 encuesta (×3.1), capacidad transferencias (×2.8), GPT en CARMEL (28.2→22.4%).
+🔴 Sin avance: E1 confirmación inmediata pedido (inact. 58.2%), E3 saludo proactivo (abandono 13.2%), S1 ruta alternativa no-disponible (2,817, +12%), S2 HumanAttention (3er mes en False), S5 onboarding.
+🟡 Rediseñar: S3 guardia 19-21h → obsoleta, ahora refuerzo 12h-15h. S4 catálogo → repuntó solo por CARMEL.
+NUEVAS jul: N1 definir/comunicar domingos (P1) | N2 refuerzo agentes 12h-15h (P1) | N3 destrabar flujo Premios 68% inact (P2) | N4 Marketplace LOGUIN 6.7%→10% (P2) | N5 auditoría CARMEL bajo carga (P2) | N6 notificación proactiva de despacho (P3).`;
+
+const chatHistory=[];
+/* ── CONFIGURACIÓN PARA PUBLICACIÓN WEB ──
+   Pega aquí la URL de tu Worker de Cloudflare (ej: 'https://cami-chat.tu-cuenta.workers.dev')
+   Si se deja vacío, el chat intenta la ruta directa (solo funciona dentro de Claude). */
+const WORKER_URL='https://cami-chat.dianac-cardona.workers.dev';
+let accessCode=null;
+function askSugg(el){document.getElementById('chatInput').value=el.textContent;sendChat();}
+function addMsg(cls,text){
+  const d=document.createElement('div');d.className='cmsg '+cls;
+  d.innerHTML=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+  document.getElementById('chatMsgs').appendChild(d);
+  document.getElementById('chatMsgs').scrollTop=1e9;
+  return d;
+}
+async function callAssistant(){
+  if(WORKER_URL){
+    const headers={'Content-Type':'application/json'};
+    if(accessCode)headers['X-Access-Code']=accessCode;
+    let r=await fetch(WORKER_URL,{method:'POST',headers,body:JSON.stringify({messages:chatHistory.slice(-12)})});
+    if(r.status===401){
+      accessCode=prompt('Este asistente requiere una clave de acceso. Ingrésala:');
+      if(!accessCode)throw new Error('sin clave');
+      headers['X-Access-Code']=accessCode;
+      r=await fetch(WORKER_URL,{method:'POST',headers,body:JSON.stringify({messages:chatHistory.slice(-12)})});
+    }
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
+  }
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:REPORT_CONTEXT,messages:chatHistory.slice(-12)})
+  });
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return r.json();
+}
+async function sendChat(){
+  const inp=document.getElementById('chatInput'),btn=document.getElementById('chatSend');
+  const q=inp.value.trim(); if(!q||btn.disabled)return;
+  inp.value='';btn.disabled=true;
+  addMsg('user',q);
+  chatHistory.push({role:'user',content:q});
+  const typing=addMsg('typing','Analizando el informe…');
+  try{
+    const data=await callAssistant();
+    const txt=(data.content||[]).map(i=>i.type==='text'?i.text:'').filter(Boolean).join('\n').trim();
+    typing.remove();
+    if(txt){addMsg('bot',txt);chatHistory.push({role:'assistant',content:txt});}
+    else throw new Error('respuesta vacía');
+  }catch(e){
+    typing.remove();
+    addMsg('err','⚠️ No pude conectar con el asistente. '+(WORKER_URL?'El servicio del chat no respondió — verifica que el Worker esté activo y su URL sea correcta.':'Este chat funciona dentro de Claude o publicado en web con un Worker configurado (ver instrucciones de publicación).'));
+    chatHistory.pop();
+  }
+  btn.disabled=false;inp.focus();
+}
+document.getElementById('chatInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
+});
+
+/* ── Barra de navegación inferior (móvil) ── */
+(function(){
+  const items=[['portada','🏠','Inicio'],['resumen','📊','Resumen'],['comparativo','🔄','Compara'],['volumen','📈','Volumen'],['agente','👤','Agente'],['marca','🏷️','Marcas'],['flujo','🔁','Flujo'],['satisfaccion','⭐','CSAT'],['segmentos','👥','Segmentos'],['jornada','🗺️','Jornada'],['plan','🚀','Plan'],['chat','💬','Asistente']];
+  const bar=document.createElement('nav');bar.className='bnav';
+  items.forEach(([id,ico,lbl],i)=>{
+    const b=document.createElement('button');b.className='bnav-btn'+(i===0?' active':'');b.dataset.page=id;
+    b.innerHTML=`<span class="bnav-ico">${ico}</span><span class="bnav-lbl">${lbl}</span>`;
+    b.onclick=()=>showPage(id,b);
+    bar.appendChild(b);
+  });
+  document.body.appendChild(bar);
+})();
+</script>
+</body>
+</html>
