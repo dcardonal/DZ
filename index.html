@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAMI DZ — Dashboard de uso mayo 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --surface-0: #f4f3ef; --surface-1: #f9f8f6; --surface-2: #ffffff;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #898781;
+    --border: rgba(11,11,11,0.10); --border-strong: rgba(11,11,11,0.18); --radius: 8px;
+    --bg-danger: #fcebeb; --text-danger: #a32d2d; --border-danger: #f09595;
+    --bg-warning: #faeeda; --text-warning: #854f0b; --border-warning: #ef9f27;
+    --bg-success: #eaf3de; --text-success: #3b6d11; --border-success: #97c459;
+    --bg-accent: #e6f1fb; --text-accent: #185fa5; --border-accent: #85b7eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-0: #111110; --surface-1: #1a1a19; --surface-2: #242422;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #898781;
+      --border: rgba(255,255,255,0.10); --border-strong: rgba(255,255,255,0.18);
+      --bg-danger: #501313; --text-danger: #f09595; --border-danger: #a32d2d;
+      --bg-warning: #412402; --text-warning: #fac775; --border-warning: #854f0b;
+      --bg-success: #173404; --text-success: #c0dd97; --border-success: #3b6d11;
+      --bg-accent: #042c53; --text-accent: #b5d4f4; --border-accent: #185fa5;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--surface-0); color: var(--text-primary); padding: 2rem 1.5rem; min-height: 100vh; }
+  .page-header { margin-bottom: 2rem; }
+  .page-header h1 { font-size: 20px; font-weight: 500; }
+  .page-header p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .badge-header { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 10px; background: var(--bg-accent); color: var(--text-accent); margin-bottom: 8px; }
+  .stitle { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin: 1.75rem 0 .75rem; }
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media(max-width:700px){ .kpi-row{ grid-template-columns: 1fr 1fr; } }
+  .kpi { background: var(--surface-1); border-radius: var(--radius); padding: 1rem 1.25rem; }
+  .kpi-lbl { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .kpi-val { font-size: 26px; font-weight: 500; line-height: 1.1; }
+  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .blue{color:#2a78d6}.green{color:#1baf7a}.amber{color:#eda100}.red{color:#e34948}.purple{color:#4a3aa7}
+  .nav { display: flex; gap: 6px; margin: 1.75rem 0 1.25rem; flex-wrap: wrap; border-bottom: .5px solid var(--border); padding-bottom: 1rem; }
+  .ntab { font-size: 12px; padding: 5px 14px; border-radius: var(--radius); border: .5px solid var(--border-strong); background: transparent; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
+  .ntab:hover { background: var(--surface-1); }
+  .ntab.active { background: var(--bg-accent); color: var(--text-accent); border-color: var(--border-accent); }
+  .sec { display: none; } .sec.active { display: block; }
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media(max-width:700px){ .g2,.g3{ grid-template-columns:1fr; } }
+  .card { background: var(--surface-1); border-radius: 12px; padding: 1.25rem; }
+  .card h3 { font-size: 13px; font-weight: 500; color: var(--text-secondary); margin: 0 0 1rem; }
+  .hrow { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .hlbl { font-size: 11px; color: var(--text-secondary); width: 200px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .htrk { flex: 1; height: 18px; background: var(--surface-0); border-radius: 4px; overflow: hidden; }
+  .hfill { height: 100%; border-radius: 4px; }
+  .hval { font-size: 11px; color: var(--text-muted); width: 42px; text-align: right; flex-shrink: 0; }
+  .frow { margin-bottom: 10px; }
+  .flbl { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 3px; }
+  .ftrk { height: 22px; background: var(--surface-0); border-radius: 4px; overflow: hidden; }
+  .ffill { height: 100%; border-radius: 4px; }
+  .irow { font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between; padding: 4px 0; border-bottom: .5px solid var(--border); }
+  .irow:last-child { border-bottom: none; }
+  .irow b { color: var(--text-primary); font-weight: 500; }
+  .alert-box { border-radius: var(--radius); padding: .75rem 1rem; margin-top: 16px; font-size: 13px; display: flex; gap: 8px; align-items: flex-start; }
+  .alert-box.danger { background: var(--bg-danger); color: var(--text-danger); border: .5px solid var(--border-danger); }
+  .alert-box.warn { background: var(--bg-warning); color: var(--text-warning); border: .5px solid var(--border-warning); }
+  .sub-nav { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .stab { font-size: 11px; padding: 3px 10px; border-radius: var(--radius); border: .5px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
+  .stab.active { background: var(--surface-0); color: var(--text-primary); border-color: var(--border-strong); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { text-align: left; font-size: 11px; font-weight: 500; color: var(--text-muted); padding: 6px 10px; border-bottom: .5px solid var(--border-strong); white-space: nowrap; }
+  thead th.r { text-align: right; }
+  tbody tr { border-bottom: .5px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-0); }
+  td { padding: 8px 10px; color: var(--text-secondary); vertical-align: middle; }
+  td.name { color: var(--text-primary); font-weight: 500; max-width: 190px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  td.r { text-align: right; }
+  .rank { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 500; background: var(--surface-0); color: var(--text-muted); }
+  .rank.gold { background: #fdf3d0; color: #92650a; }
+  .rank.silver { background: #f0f0ee; color: #5a5a58; }
+  .rank.bronze { background: #fdf0e6; color: #924a0a; }
+  .pill { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+  .pill.hi { background: var(--bg-danger); color: var(--text-danger); }
+  .pill.mid { background: var(--bg-warning); color: var(--text-warning); }
+  .pill.lo { background: var(--bg-success); color: var(--text-success); }
+  .pill.none { background: var(--surface-0); color: var(--text-muted); }
+  .bar-wrap { display: flex; align-items: center; gap: 5px; justify-content: flex-end; }
+  .mini-bar { height: 8px; border-radius: 3px; min-width: 3px; }
+  .note { font-size: 11px; color: var(--text-muted); margin-top: 1rem; padding-top: .75rem; border-top: .5px solid var(--border); line-height: 1.6; }
+  .footer { margin-top: 3rem; padding-top: 1rem; border-top: .5px solid var(--border); font-size: 11px; color: var(--text-muted); text-align: center; }
+  /* Solicitudes tab styles */
+  .topic-block { margin-bottom: 1.5rem; }
+  .topic-header { display: flex; align-items: center; gap: 10px; margin-bottom: .75rem; cursor: pointer; user-select: none; }
+  .topic-header h3 { font-size: 13px; font-weight: 500; color: var(--text-secondary); margin: 0; flex: 1; }
+  .topic-count { font-size: 11px; color: var(--text-muted); background: var(--surface-0); padding: 2px 8px; border-radius: 10px; }
+  .topic-toggle { font-size: 11px; color: var(--text-muted); transition: transform .2s; }
+  .topic-toggle.open { transform: rotate(180deg); }
+  .topic-examples { display: none; }
+  .topic-examples.open { display: block; }
+  .example-list { list-style: none; padding: 0; }
+  .example-list li { font-size: 12px; color: var(--text-secondary); padding: 6px 12px; border-left: 2px solid var(--border-strong); margin-bottom: 6px; background: var(--surface-0); border-radius: 0 6px 6px 0; line-height: 1.5; }
+  .example-list li::before { content: '"'; color: var(--text-muted); margin-right: 2px; }
+  .example-list li::after { content: '"'; color: var(--text-muted); margin-left: 2px; }
+  .pattern-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: .5rem; }
+  .pattern-table td { padding: 6px 10px; border-bottom: .5px solid var(--border); vertical-align: top; }
+  .pattern-table td:first-child { color: var(--text-primary); font-weight: 500; width: 40%; font-family: monospace; font-size: 11px; }
+  .pattern-table td:last-child { color: var(--text-secondary); }
+  .pattern-table tr:last-child td { border-bottom: none; }
+  .topic-emoji { font-size: 16px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <span class="badge-header">ELEDÉ / Línea Directa</span>
+  <h1>CAMI DZ — Dashboard de uso</h1>
+  <p>Canal WhatsApp Directoras de Zona &nbsp;·&nbsp; Período: 1 mayo – 1 junio 2026 &nbsp;·&nbsp; 7.563 sesiones analizadas</p>
+</div>
+
+<p class="stitle" style="margin-top:0">Visión general</p>
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-lbl">Total sesiones</div><div class="kpi-val blue">7.563</div><div class="kpi-sub">1 may – 1 jun 2026</div></div>
+  <div class="kpi"><div class="kpi-lbl">DZ únicas</div><div class="kpi-val">445</div><div class="kpi-sub">Promedio 17 ses/DZ</div></div>
+  <div class="kpi"><div class="kpi-lbl">Escalaciones a UEC</div><div class="kpi-val red">5.413</div><div class="kpi-sub">71.6% de todas las sesiones</div></div>
+  <div class="kpi"><div class="kpi-lbl">Autogestión bot</div><div class="kpi-val green">285</div><div class="kpi-sub">3.8% sin escalar</div></div>
+</div>
+<div class="kpi-row" style="margin-top:10px">
+  <div class="kpi"><div class="kpi-lbl">UEC conectó con DZ</div><div class="kpi-val amber">5.167</div><div class="kpi-sub">246 fuera de horario</div></div>
+  <div class="kpi"><div class="kpi-lbl">Avg msgs / sesión</div><div class="kpi-val">25.7</div><div class="kpi-sub">Max: 1.418 mensajes</div></div>
+  <div class="kpi"><div class="kpi-lbl">Aliados UEC activos</div><div class="kpi-val purple">15+</div><div class="kpi-sub">Laura lidera: 303 ses</div></div>
+  <div class="kpi"><div class="kpi-lbl">DZ recurrentes 10+</div><div class="kpi-val">251</div><div class="kpi-sub">56% de la base</div></div>
+</div>
+
+<div class="nav">
+  <button class="ntab active" onclick="showTab('uec',this)"><i class="ti ti-users"></i> Análisis UEC</button>
+  <button class="ntab" onclick="showTab('ranking',this)"><i class="ti ti-trophy"></i> Ranking DZ</button>
+  <button class="ntab" onclick="showTab('autobot',this)"><i class="ti ti-robot"></i> Autogestión bot</button>
+  <button class="ntab" onclick="showTab('actividad',this)"><i class="ti ti-chart-bar"></i> Actividad</button>
+  <button class="ntab" onclick="showTab('solicitudes',this)"><i class="ti ti-messages"></i> Cómo solicitan</button>
+</div>
+
+<!-- TAB UEC -->
+<div id="uec" class="sec active">
+  <div class="g2">
+    <div class="card">
+      <h3>Temas tratados con Aliado UEC (sesiones)</h3>
+      <div class="hrow"><div class="hlbl">Inscripción / activación asesora</div><div class="htrk"><div class="hfill" style="width:100%;background:#2a78d6"></div></div><div class="hval">1.870</div></div>
+      <div class="hrow"><div class="hlbl">Novedad pedido / despacho</div><div class="htrk"><div class="hfill" style="width:92%;background:#4a3aa7"></div></div><div class="hval">1.730</div></div>
+      <div class="hrow"><div class="hlbl">Conversación general</div><div class="htrk"><div class="hfill" style="width:82%;background:#888"></div></div><div class="hval">1.532</div></div>
+      <div class="hrow"><div class="hlbl">Saldo / cupo / pago</div><div class="htrk"><div class="hfill" style="width:43%;background:#eda100"></div></div><div class="hval">799</div></div>
+      <div class="hrow"><div class="hlbl">Precintos / CyD</div><div class="htrk"><div class="hfill" style="width:31%;background:#1baf7a"></div></div><div class="hval">583</div></div>
+      <div class="hrow"><div class="hlbl">Desbloqueo asesora</div><div class="htrk"><div class="hfill" style="width:30%;background:#e34948"></div></div><div class="hval">567</div></div>
+      <div class="hrow"><div class="hlbl">Premio no recibido</div><div class="htrk"><div class="hfill" style="width:24%;background:#e87ba4"></div></div><div class="hval">448</div></div>
+      <div class="hrow"><div class="hlbl">Anular / cancelar proceso</div><div class="htrk"><div class="hfill" style="width:14%;background:#eb6834"></div></div><div class="hval">263</div></div>
+      <div class="hrow"><div class="hlbl">Pedido no recibido</div><div class="htrk"><div class="hfill" style="width:13%;background:#4a3aa7"></div></div><div class="hval">235</div></div>
+      <div class="hrow"><div class="hlbl">Clave / acceso plataforma</div><div class="htrk"><div class="hfill" style="width:4%;background:#eda100"></div></div><div class="hval">71</div></div>
+      <div class="hrow"><div class="hlbl">Producto averiado</div><div class="htrk"><div class="hfill" style="width:4%;background:#e34948"></div></div><div class="hval">68</div></div>
+    </div>
+    <div class="card">
+      <h3>Distribución temas UEC</h3>
+      <div style="position:relative;height:280px"><canvas id="uecPie"></canvas></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Carga por Aliado UEC</h3>
+      <div class="hrow"><div class="hlbl">Laura</div><div class="htrk"><div class="hfill" style="width:100%;background:#2a78d6"></div></div><div class="hval">303</div></div>
+      <div class="hrow"><div class="hlbl">Isabel</div><div class="htrk"><div class="hfill" style="width:93%;background:#2a78d6"></div></div><div class="hval">282</div></div>
+      <div class="hrow"><div class="hlbl">Johana</div><div class="htrk"><div class="hfill" style="width:74%;background:#4a3aa7"></div></div><div class="hval">225</div></div>
+      <div class="hrow"><div class="hlbl">Wendy</div><div class="htrk"><div class="hfill" style="width:63%;background:#4a3aa7"></div></div><div class="hval">191</div></div>
+      <div class="hrow"><div class="hlbl">Elizabeth</div><div class="htrk"><div class="hfill" style="width:59%;background:#1baf7a"></div></div><div class="hval">178</div></div>
+      <div class="hrow"><div class="hlbl">Carolina</div><div class="htrk"><div class="hfill" style="width:58%;background:#1baf7a"></div></div><div class="hval">176</div></div>
+      <div class="hrow"><div class="hlbl">Jose</div><div class="htrk"><div class="hfill" style="width:58%;background:#1baf7a"></div></div><div class="hval">176</div></div>
+      <div class="hrow"><div class="hlbl">Paola</div><div class="htrk"><div class="hfill" style="width:56%;background:#eda100"></div></div><div class="hval">169</div></div>
+      <div class="hrow"><div class="hlbl">Cristian</div><div class="htrk"><div class="hfill" style="width:55%;background:#eda100"></div></div><div class="hval">168</div></div>
+      <div class="hrow"><div class="hlbl">Vanessa</div><div class="htrk"><div class="hfill" style="width:55%;background:#eda100"></div></div><div class="hval">167</div></div>
+      <div class="hrow"><div class="hlbl">Wilmar</div><div class="htrk"><div class="hfill" style="width:54%;background:#888"></div></div><div class="hval">163</div></div>
+      <div class="hrow"><div class="hlbl">Andrea</div><div class="htrk"><div class="hfill" style="width:53%;background:#888"></div></div><div class="hval">160</div></div>
+    </div>
+    <div class="card">
+      <h3>Potencial deflexión al agente IA</h3>
+      <div class="irow"><span>Desbloqueo asesora</span><b class="green">567 — automatizable</b></div>
+      <div class="irow"><span>Premio no recibido</span><b class="green">448 — automatizable</b></div>
+      <div class="irow"><span>Pedido no recibido</span><b class="green">235 — automatizable</b></div>
+      <div class="irow"><span>Clave / acceso</span><b class="green">71 — automatizable</b></div>
+      <div class="irow"><span>Producto averiado</span><b class="green">68 — automatizable</b></div>
+      <div class="irow"><span>Saldo / cupo / pago</span><b class="amber">799 — parcial</b></div>
+      <div class="irow"><span>Precintos / CyD</span><b class="amber">583 — parcial</b></div>
+      <div class="irow"><span>Anular proceso</span><b class="amber">263 — parcial</b></div>
+      <div class="irow"><span>Inscripción / activación</span><b class="red">1.870 — requiere humano</b></div>
+      <div class="irow"><span>Novedad pedido</span><b class="red">1.730 — requiere humano</b></div>
+      <p style="font-size:11px;color:var(--text-muted);margin:.75rem 0 0">Deflexión estimada: <b style="color:var(--text-primary)">~2.189 sesiones (42%)</b></p>
+    </div>
+  </div>
+  <div class="alert-box danger"><i class="ti ti-alert-circle" style="font-size:18px;flex-shrink:0;margin-top:1px"></i><span><b>Hallazgo crítico:</b> el 71.6% de sesiones termina en escalación UEC. Inscripción (36.2%) y novedades de pedido (33.5%) dominan la carga y requieren integración con sistemas internos para ser deflectados por el agente IA.</span></div>
+  <div class="alert-box warn" style="margin-top:10px"><i class="ti ti-clock" style="font-size:18px;flex-shrink:0;margin-top:1px"></i><span><b>Demanda fuera de horario:</b> 246 DZ intentaron contactar al Aliado UEC sin éxito. El agente IA puede capturar esa demanda 24/7 y dejar el caso listo para el siguiente día hábil.</span></div>
+</div>
+
+<!-- TAB RANKING -->
+<div id="ranking" class="sec">
+  <div class="sub-nav">
+    <button class="stab active" onclick="showRank('top10',this)">Top 10 mayor uso</button>
+    <button class="stab" onclick="showRank('bot10',this)">Top 10 menor uso</button>
+  </div>
+  <div id="top10">
+    <div class="card">
+      <h3>DZ con más sesiones — mayo 2026</h3>
+      <table>
+        <thead><tr><th style="width:32px">#</th><th>Nombre DZ</th><th class="r">Sesiones</th><th class="r">Escala UEC</th><th class="r">Txn bot</th><th class="r">Avg msgs</th><th>Perfil</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rank gold">1</span></td><td class="name">dzmonicalopez4103</td><td class="r"><b>86</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:37px;background:#e34948"></div>32 (37%)</div></td><td class="r"><span class="green" style="font-weight:500">18</span></td><td class="r">23.4</td><td><span class="pill mid">UEC + bot</span></td></tr>
+          <tr><td><span class="rank silver">2</span></td><td class="name">pacifika</td><td class="r"><b>75</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:59px;background:#e34948"></div>44 (59%)</div></td><td class="r"><span class="amber" style="font-weight:500">5</span></td><td class="r">20.7</td><td><span class="pill hi">Alta escala</span></td></tr>
+          <tr><td><span class="rank bronze">3</span></td><td class="name">Elede</td><td class="r"><b>61</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:80px;background:#e34948"></div>49 (80%)</div></td><td class="r"><span class="red" style="font-weight:500">1</span></td><td class="r">26.7</td><td><span class="pill hi">Casi solo UEC</span></td></tr>
+          <tr><td><span class="rank">4</span></td><td class="name">Loguin Cartago Andrea Orozco</td><td class="r"><b>52</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:85px;background:#e34948"></div>44 (85%)</div></td><td class="r"><span class="red" style="font-weight:500">1</span></td><td class="r">32.1</td><td><span class="pill hi">Casi solo UEC</span></td></tr>
+          <tr><td><span class="rank">5</span></td><td class="name">Pacifika Zona 2104</td><td class="r"><b>51</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:67px;background:#e34948"></div>34 (67%)</div></td><td class="r"><span class="red" style="font-weight:500">0</span></td><td class="r">20.8</td><td><span class="pill hi">Solo UEC</span></td></tr>
+          <tr><td><span class="rank">6</span></td><td class="name">PCFK 2131 Andrea Cuesta</td><td class="r"><b>48</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:71px;background:#e34948"></div>34 (71%)</div></td><td class="r"><span class="green" style="font-weight:500">6</span></td><td class="r">29.2</td><td><span class="pill mid">UEC + bot</span></td></tr>
+          <tr><td><span class="rank">7</span></td><td class="name">Johana Contreras Zona 2123</td><td class="r"><b>48</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:29px;background:#e34948"></div>14 (29%)</div></td><td class="r"><span class="green" style="font-weight:500">1</span></td><td class="r">17.2</td><td><span class="pill lo">Más autónoma</span></td></tr>
+          <tr><td><span class="rank">8</span></td><td class="name">Carmel Neiva Sur Z71</td><td class="r"><b>47</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:91px;background:#e34948"></div>43 (91%)</div></td><td class="r"><span class="red" style="font-weight:500">0</span></td><td class="r">22.3</td><td><span class="pill hi">Solo UEC</span></td></tr>
+          <tr><td><span class="rank">9</span></td><td class="name">Carmel Claudia Sarasty</td><td class="r"><b>46</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:78px;background:#e34948"></div>36 (78%)</div></td><td class="r"><span class="red" style="font-weight:500">1</span></td><td class="r">18.8</td><td><span class="pill hi">Casi solo UEC</span></td></tr>
+          <tr><td><span class="rank">10</span></td><td class="name">Ana Milena Arenas</td><td class="r"><b>45</b></td><td class="r"><div class="bar-wrap"><div class="mini-bar" style="width:80px;background:#e34948"></div>36 (80%)</div></td><td class="r"><span class="red" style="font-weight:500">0</span></td><td class="r">25.0</td><td><span class="pill hi">Solo UEC</span></td></tr>
+        </tbody>
+      </table>
+      <p class="note"><b>Txn bot</b> = transacciones completadas sin escalar al UEC. Solo 2 de las 10 DZ más activas tienen uso mixto real (bot + UEC).</p>
+    </div>
+  </div>
+  <div id="bot10" style="display:none">
+    <div class="card">
+      <h3>DZ con menor actividad — mayo 2026</h3>
+      <table>
+        <thead><tr><th style="width:32px">#</th><th>Nombre DZ</th><th class="r">Sesiones</th><th class="r">Escala UEC</th><th class="r">Txn bot</th><th class="r">Avg msgs</th><th>Observación</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rank">436</span></td><td class="name">Pacifika2107</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">3.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">437</span></td><td class="name">Carmel norte de Cali y Yumbo</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">2.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">438</span></td><td class="name">Jucastillo</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">10.0</td><td><span class="pill none">Exploración</span></td></tr>
+          <tr><td><span class="rank">439</span></td><td class="name">Daniela Gomez</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">3.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">440</span></td><td class="name">Duban Laverde</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">3.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">441</span></td><td class="name">Clau Sarasty</td><td class="r"><b>1</b></td><td class="r"><span class="green" style="font-weight:500">1</span></td><td class="r">—</td><td class="r">87.0</td><td><span class="pill lo">1 ses larga, completó</span></td></tr>
+          <tr><td><span class="rank">442</span></td><td class="name">José Mosquera</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">44.0</td><td><span class="pill none">1 ses larga sin txn</span></td></tr>
+          <tr><td><span class="rank">443</span></td><td class="name">Fernando Navarro — Analista UEC</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">56.0</td><td><span class="pill mid">Posible acceso interno</span></td></tr>
+          <tr><td><span class="rank">444</span></td><td class="name">22+ A5pgĺoria Patriciaro</td><td class="r"><b>1</b></td><td class="r">—</td><td class="r">—</td><td class="r">3.0</td><td><span class="pill none">Solo saludo</span></td></tr>
+          <tr><td><span class="rank">445</span></td><td class="name">Creando Moda con el Corazón</td><td class="r"><b>1</b></td><td class="r"><span class="red">1</span></td><td class="r">—</td><td class="r">18.0</td><td><span class="pill none">Solo buscó UEC</span></td></tr>
+        </tbody>
+      </table>
+      <p class="note">Las 32 DZ con una sola sesión son el 7.2% de la base. <b>Fernando Navarro (Analista UEC)</b> aparece como usuario DZ — se recomienda excluirlo en futuros análisis.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB AUTOBOT -->
+<div id="autobot" class="sec">
+  <div class="g2" style="margin-top:0;margin-bottom:16px">
+    <div class="card">
+      <h3>Uso por opción del menú principal (sesiones únicas)</h3>
+      <div class="hrow"><div class="hlbl">Aliado UEC</div><div class="htrk"><div class="hfill" style="width:100%;background:#e34948"></div></div><div class="hval">5.425</div></div>
+      <div class="hrow"><div class="hlbl">Gestión de casos</div><div class="htrk"><div class="hfill" style="width:21%;background:#2a78d6"></div></div><div class="hval">1.143</div></div>
+      <div class="hrow"><div class="hlbl">Bloqueos</div><div class="htrk"><div class="hfill" style="width:3%;background:#4a3aa7"></div></div><div class="hval">148</div></div>
+      <div class="hrow"><div class="hlbl">Consultar asesoras</div><div class="htrk"><div class="hfill" style="width:3%;background:#1baf7a"></div></div><div class="hval">142</div></div>
+      <div class="hrow"><div class="hlbl">Desbloqueos</div><div class="htrk"><div class="hfill" style="width:2%;background:#eda100"></div></div><div class="hval">121</div></div>
+      <div class="hrow"><div class="hlbl">Gestión directora</div><div class="htrk"><div class="hfill" style="width:2%;background:#eb6834"></div></div><div class="hval">90</div></div>
+      <div class="hrow"><div class="hlbl">Estado inscripción</div><div class="htrk"><div class="hfill" style="width:1%;background:#888"></div></div><div class="hval">61</div></div>
+    </div>
+    <div class="card">
+      <h3>Distribución del menú principal</h3>
+      <div style="position:relative;height:240px"><canvas id="menuPie"></canvas></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Funnel de autogestión</h3>
+      <div class="frow"><div class="flbl"><span>Sesiones totales</span><span>7.563</span></div><div class="ftrk"><div class="ffill" style="width:100%;background:#2a78d6"></div></div></div>
+      <div class="frow"><div class="flbl"><span>Llegaron al menú</span><span>961 (13%)</span></div><div class="ftrk"><div class="ffill" style="width:13%;background:#4a3aa7"></div></div></div>
+      <div class="frow"><div class="flbl"><span>Completaron transacción bot</span><span>285 (3.8%)</span></div><div class="ftrk"><div class="ffill" style="width:3.8%;background:#1baf7a"></div></div></div>
+      <div class="frow"><div class="flbl"><span>Escalaron a UEC</span><span>5.413 (71.6%)</span></div><div class="ftrk"><div class="ffill" style="width:71.6%;background:#e34948"></div></div></div>
+      <div class="frow"><div class="flbl"><span>Abandonaron (timeout/core)</span><span>5.371 (71%)</span></div><div class="ftrk"><div class="ffill" style="width:71%;background:#888"></div></div></div>
+    </div>
+    <div class="card">
+      <h3>Transacciones completadas por bot</h3>
+      <div class="irow"><span>Caso Salesforce creado</span><b>189</b></div>
+      <div class="irow"><span>Casos asesora consultados</span><b>30</b></div>
+      <div class="irow"><span>Casos zona consultados</span><b>21</b></div>
+      <div class="irow"><span>Caso específico consultado</span><b>14</b></div>
+      <div class="irow"><span>Bloqueo creado</span><b>14</b></div>
+      <div class="irow"><span>Caso CyD creado</span><b>6</b></div>
+      <div class="irow"><span>Desbloqueo creado</span><b>2</b></div>
+      <div class="irow"><span>Prospecto registrado</span><b>3</b></div>
+      <div class="irow"><span>Atención UEC conectada</span><b>5.167</b></div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <h3>Categorías de casos</h3>
+      <div class="irow"><span>Pedido</span><b>500</b></div>
+      <div class="irow"><span>Premios y puntos</span><b>274</b></div>
+      <div class="irow"><span>CyD no aplicadas</span><b>50</b></div>
+      <div class="irow"><span>Flete e inscripción</span><b>44</b></div>
+      <div class="irow"><span>Pagos</span><b>8</b></div>
+    </div>
+    <div class="card">
+      <h3>Sub-razones pedido</h3>
+      <div class="irow"><span>Facturado no enviado</span><b>341</b></div>
+      <div class="irow"><span>Problemas en la entrega</span><b>69</b></div>
+      <div class="irow"><span>No recibió pedido</span><b>11</b></div>
+    </div>
+    <div class="card">
+      <h3>Motivos bloqueo</h3>
+      <div class="irow"><span>Posible fraude</span><b>51</b></div>
+      <div class="irow"><span>Retiro voluntario</span><b>39</b></div>
+      <div class="irow"><span>Relacionamiento</span><b>13</b></div>
+      <div class="irow"><span>Código fucsia</span><b>7</b></div>
+      <div class="irow"><span>Persona fallecida</span><b>4</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB ACTIVIDAD -->
+<div id="actividad" class="sec">
+  <div class="card" style="margin-top:0">
+    <h3>Sesiones por día — mayo 2026</h3>
+    <div style="position:relative;height:200px"><canvas id="dailyChart"></canvas></div>
+  </div>
+  <div class="g2">
+    <div class="card"><h3>Por hora del día</h3><div style="position:relative;height:220px"><canvas id="hourChart"></canvas></div></div>
+    <div class="card"><h3>Por día de semana</h3><div style="position:relative;height:220px"><canvas id="weekChart"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <h3>Frecuencia de uso por DZ</h3>
+      <div class="irow"><span>1 sesión (nuevas / inactivas)</span><b>32 DZ</b></div>
+      <div class="irow"><span>2–5 sesiones</span><b>39 DZ</b></div>
+      <div class="irow"><span>6–10 sesiones</span><b>71 DZ</b></div>
+      <div class="irow"><span>11–20 sesiones</span><b>162 DZ</b></div>
+      <div class="irow"><span>21–50 sesiones</span><b>136 DZ</b></div>
+      <div class="irow"><span>50+ sesiones (power users)</span><b>5 DZ</b></div>
+    </div>
+    <div class="card">
+      <h3>Profundidad de sesión</h3>
+      <div class="irow"><span>Promedio general</span><b>25.7 msgs</b></div>
+      <div class="irow"><span>Promedio sesiones UEC</span><b>23.2 msgs</b></div>
+      <div class="irow"><span>Sesiones con 6+ mensajes</span><b>6.901 (91%)</b></div>
+      <div class="irow"><span>Sesiones con 2–5 mensajes</span><b>661 (9%)</b></div>
+      <div class="irow"><span>Máximo registrado</span><b>1.418 msgs</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB SOLICITUDES -->
+<div id="solicitudes" class="sec">
+  <p style="font-size:13px;color:var(--text-secondary);margin-bottom:1.25rem">Ejemplos reales de cómo las DZ expresan cada tipo de solicitud en sus propias palabras. Haz clic en cada tema para ver los ejemplos. Extraído de 7.563 sesiones reales — mayo 2026.</p>
+
+  <!-- FNE -->
+  <div class="card topic-block">
+    <div class="topic-header" onclick="toggleTopic('fne')">
+      <span class="topic-emoji">📦</span>
+      <h3>Facturado no enviado (FNE)</h3>
+      <span class="topic-count">341 casos · 67% de casos de pedido</span>
+      <span class="topic-toggle" id="toggle-fne">▼</span>
+    </div>
+    <div class="topic-examples" id="examples-fne">
+      <ul class="example-list">
+        <li>La asesora refiere que la prenda no llegó dentro de su pedido y está facturada</li>
+        <li>La AS se le facturaron dos pestañinas pero solo le llegó una. Código 656673. Factura 9733574519</li>
+        <li>La as indica que se le está cobrando 1 producto en su factura que no recibió dentro de la caja de su pedido</li>
+        <li>Estaba viajando y apenas pudo revisar su pedido, me indica que le faltó 1 producto, viene facturado pero no venía en la caja. Código 699279</li>
+        <li>Cc80920150 / Factura 49232289 / Campaña 6 — me indica que le faltó 1 producto, viene facturado pero no venía en la caja</li>
+        <li>Por fa me miras este ticket, es un facturado no enviado y aún no lo veo aplicado. 41926633 OLGA LUCIA LARGO RUIZ — TICKET #20644</li>
+        <li>Esta asesora tuvo un caso con transporte en c6 de dos facturado no enviado, el pedido le llegó por Servientrega</li>
+        <li>La asesora realizó un mega pedido y reportó que el código no le llegó, está facturado pero físicamente no llegó</li>
+        <li>As CC 63335840 — no le llegó cambio y por CAMI le dijeron que le habían aplicado descuento pero no aparece</li>
+        <li>Hemos presentado una novedad con 209 AS plata que no llegaron al premio por segmentación y no recibieron el premio Sorpresa</li>
+        <li>También quiero saber algo de mis cambios, la empresa no recibió una de mis tulas entonces los cambios no alcanzaron a ser aplicados</li>
+        <li>Ayúdame a validar si aún no han aplicado las NC de mis cambios, tengo una gran cantidad indispuestas porque no las gestionaron</li>
+        <li>El as indica que subió pedido pero no le enviaron — me confirmas en qué estado está</li>
+        <li>Kathe por favor me miras este ticket, es un facturado no enviado y aún no lo veo aplicado</li>
+        <li>Me ayudas con 2 casos de AS oro que no les aplicaron devoluciones y no les enviaron cambios, no veo ajustes en los estados de cuenta</li>
+        <li>Linis, ¿qué has sabido de los casos de los cambios que no llegaron? Me están preguntando</li>
+        <li>Bella, ayúdame con algo, la as CC 5104311 está molesta porque no le llegó el incentivo</li>
+        <li>Por favor me ayudas a ver si la sra 66971920 se debe inscribir nuevamente. No puedo ver su estado de cuenta</li>
+        <li>Asesora cc 1013682223 — se volvió a conectar con Loguin y me indica que no recibió el premio de reconexión</li>
+        <li>¿Han solucionado el caso de los cambios que no llegaron? Me están preguntando varias asesoras</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PREMIOS -->
+  <div class="card topic-block">
+    <div class="topic-header" onclick="toggleTopic('premios')">
+      <span class="topic-emoji">🎁</span>
+      <h3>Premios y puntos</h3>
+      <span class="topic-count">274 casos · 76% por premio no recibido</span>
+      <span class="topic-toggle" id="toggle-premios">▼</span>
+    </div>
+    <div class="topic-examples" id="examples-premios">
+      <ul class="example-list">
+        <li>El premio le llegó partido a la asesora</li>
+        <li>Mi patri me puedes por fi ayudar validando BEATRIZ GARCIA MURILLO 43556464, esta asesora me informa que aún no recibe el premio del butaco</li>
+        <li>Asesora ORO tiene 811 puntos acumulados c6+c7, ella escogió premio set x 4 bowls y le mandaron fue canasta picnic</li>
+        <li>La AS LAUDID no recibió su premio por ser nueva de camp 4 y continúa en camp 5, debía recibirlo en camp 6 y no le llegó</li>
+        <li>Tengo una asesora cc 38942900 que quiere hacer devolución de incentivo por calidad</li>
+        <li>Me ayudas validando que pasó con el descuento de pedido de esta asesora 1012427502 que devolvió pedido</li>
+        <li>Hemos presentado una novedad con 209 AS plata que no llegaron al premio por segmentación y no recibieron el premio Sorpresa</li>
+        <li>MARISOL LOAIZA OSPINA cc 22001911 — la as se le facturaron dos pestañinas pero solo le llegó una. Código 656673</li>
+        <li>Es que las señoras no le creen a uno y terminaron enviando mensajes varias después de las 8, y en Puntos cerraron la página</li>
+        <li>La molestia de ella es que escogió set x 4 bowls y le mandaron fue canasta picnic — solicita verificación</li>
+        <li>Dile a la asesora que haga caso omiso a la información de ese premio de CARRITO MULTIUSO SIN TAPA ya que ella no es ganadora</li>
+        <li>Asesora dice que tiene más de 500 puntos y no se los han redimido</li>
+        <li>Me puedes ayudar validando que pasó con los puntos de esta asesora, dice que cumplió el puntaje pero no le aparece el premio</li>
+        <li>Señora Rossana, este vestido lo pedí en promoción venía por $30 mil precio promo y lo facturaron como viene en la revista normal</li>
+        <li>Yesica zona 32003 — el premio le llegó partido a la asesora</li>
+        <li>La as no recibió el incentivo pero estoy revisando y él no cumplió con el puntaje pero sigue diciendo que sí lo completó</li>
+        <li>Cuando me habilitan la página para empezar a ingresar pedidos de Campaña 7 — quiero ver los puntos acumulados</li>
+        <li>Me ayuda con 2 casos de as oro que no les aplicaron devoluciones y no les enviaron cambios</li>
+        <li>La asesora dice que tiene más de 800 puntos y el premio no le ha llegado en 3 campañas</li>
+        <li>Me ayudas validando que asesoras de mi zona tienen puntos para redimir este cierre</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- BLOQUEOS -->
+  <div class="card topic-block">
+    <div class="topic-header" onclick="toggleTopic('bloqueos')">
+      <span class="topic-emoji">🔐</span>
+      <h3>Bloqueos</h3>
+      <span class="topic-count">148 sesiones · Posible fraude 44% · Retiro voluntario 34%</span>
+      <span class="topic-toggle" id="toggle-bloqueos">▼</span>
+    </div>
+    <div class="topic-examples" id="examples-bloqueos">
+      <ul class="example-list">
+        <li>Tengo unos AS sospechosos de fraude y sin trabajar, ¿los podemos bloquear para esta campaña?</li>
+        <li>Necesito por favor bloquear esta asesora</li>
+        <li>Hola Sergio, buenos días. La as 39808713 indica que se encuentra bloqueada, ¿me podrías indicar el motivo y si se puede desbloquear?</li>
+        <li>Tengo asesoras que están en retiro voluntario, ¿cómo las bloqueo?</li>
+        <li>Esta asesora falleció, necesito gestionar el bloqueo</li>
+        <li>Me ayudas a revisar si esta posible asesora ya está activa: 1006788751 TANIA ANGULO MENDIETA</li>
+        <li>Hola Lina, espero tengas un lindo día. Me ayudas por favor, tengo 2 procesos de inscripción pendientes. Cédulas: 52727363 / 1024505971</li>
+        <li>Y también tengo unos AS sospechosos y sin trabajar, ¿los trabajo a ver si los dejamos en C8?</li>
+        <li>Hola mi Naty! Me puedes revisar este proceso a ver qué le falta — EDWIN JOSE URRUCHURTU CC: 1047510243</li>
+        <li>Leidy Karina Peña CC 63552299 / Jessica Tatiana Garrido CC 1095814186 — retiro voluntario</li>
+        <li>Quiero bloquear estas asesoras que llevan sin pedir más de 3 campañas</li>
+        <li>La asesora me dijo que no me conoce y se niega a recibirme la visita</li>
+        <li>Tengo sospecha de fraude, la asesora pidió exactamente las mismas tallas en todas las referencias</li>
+        <li>Necesito gestionar el caso de una asesora que suplantó su identidad</li>
+        <li>Esta asesora tiene historial negativo en Línea Directa de otra campaña</li>
+        <li>Me ayudas a bloquear a esta asesora que lleva más de 6 campañas sin pagar</li>
+        <li>Respuesta de formulario FormBlockTicket</li>
+        <li>La asesora se negó para la visita — necesito dejar el registro</li>
+        <li>Tengo asesoras con actitud sospechosa en la entrega del pedido, ¿las bloqueo?</li>
+        <li>Esta asesora pidió el mismo pedido que la campaña anterior con tallas idénticas — posible fraude</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DESBLOQUEOS -->
+  <div class="card topic-block">
+    <div class="topic-header" onclick="toggleTopic('desbloqueos')">
+      <span class="topic-emoji">🔓</span>
+      <h3>Desbloqueos</h3>
+      <span class="topic-count">121 sesiones</span>
+      <span class="topic-toggle" id="toggle-desbloqueos">▼</span>
+    </div>
+    <div class="topic-examples" id="examples-desbloqueos">
+      <ul class="example-list">
+        <li>Hola! Me ayudas a desbloquear esta asesora</li>
+        <li>Necesito por favor desbloquear a esta ase</li>
+        <li>Querida por favor me puedes ayudar con el desbloqueo de esta cédula 32675713</li>
+        <li>Me ayudas por favor con el desbloqueo de la asesora con cc 1001142180</li>
+        <li>Tú me puedes por favor ayudar con el desbloqueo de esta asesora</li>
+        <li>La as 39808713 indica que se encuentra bloqueada, ¿me podrías indicar el motivo y si se puede desbloquear?</li>
+        <li>Listo querida, me avisas. Es que tiene pedido y hoy estoy en cierre</li>
+        <li>Esta asesora fue bloqueada por posible fraude pero ya se aclaró la situación</li>
+        <li>Pacifika Floridablanca: Leidy CC 63552299 / Jessica CC 1095814186 — necesito desbloquearlas</li>
+        <li>Tengo asesoras bloqueadas por relacionamiento que ya firmaron el acuerdo, ¿las desbloqueo?</li>
+        <li>La asesora dice que no le aparece la opción de hacer pedido, ¿estará bloqueada?</li>
+        <li>Me puedes confirmar si esta asesora está bloqueada o inactiva: cc 52906079</li>
+        <li>Ya regularizó su situación de pago, ¿ya se puede desbloquear?</li>
+        <li>El bloqueo lo generé yo por error, ¿se puede revertir?</li>
+        <li>Necesito desbloquear a varias asesoras que bloqueé por relacionamiento pero ya hicieron el acuerdo</li>
+        <li>Me ayudas a revisar el estado de estas asesoras: cc 63552299 / cc 1095814186 / cc 63448901</li>
+        <li>Rossana DZ — me ayudas porfa con el desbloqueo de la cédula 32675713</li>
+        <li>Loguin Zona Norte Bucaramanga — necesito por favor desbloquear a esta ase</li>
+        <li>Pacifika zona 1114 — me ayudas porfa con el desbloqueo de la asesora con cc 1001142180</li>
+        <li>Hola Sergio buenos días — la as indica que se encuentra bloqueada, ¿me podrías indicar el motivo?</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CONSULTAR CASOS -->
+  <div class="card topic-block">
+    <div class="topic-header" onclick="toggleTopic('casos')">
+      <span class="topic-emoji">📋</span>
+      <h3>Consultar casos</h3>
+      <span class="topic-count">65 sesiones · Zona, asesora o número específico</span>
+      <span class="topic-toggle" id="toggle-casos">▼</span>
+    </div>
+    <div class="topic-examples" id="examples-casos">
+      <ul class="example-list">
+        <li>Por fa me miras este ticket, es un facturado no enviado y aún no lo veo aplicado</li>
+        <li>Me ayudas con 2 casos de as oro que no les aplicaron devoluciones — no veo ajustes en los estados de cuenta</li>
+        <li>Asesora informa que subió pedido pero no le enviaron, ¿me confirmas en qué estado está?</li>
+        <li>Linis, ¿qué has sabido de los casos de los cambios que no llegaron? Me están preguntando</li>
+        <li>¿Saber acerca de los radicados en servicio al cliente de las 2 primeras por cambios?</li>
+        <li>La AS LAUDID no recibió su premio, debía recibirlo en camp 6 y no le llegó</li>
+        <li>La asesora quiere hacer devolución de incentivo por calidad — ¿en qué estado va?</li>
+        <li>Hola, ¿puedes indicar por qué todos los pedidos no llegan al tiempo? Tengo varios casos de AS</li>
+        <li>¿Qué pasó con la entrega de una de mis asesoras que vive en UNE y la llamaron que lo entregaban en Bogotá?</li>
+        <li>Hola Cristian, que pena — ¿me puedes indicar por qué todos los pedidos no llegan al tiempo?</li>
+        <li>Esta asesora se volvió a conectar con Loguin y me indica que no recibió el premio de reconexión</li>
+        <li>¿Han solucionado el caso de los cambios que no llegaron? Me están preguntando varias asesoras</li>
+        <li>¿En qué va el caso de la asesora 39808713 que presentó novedad de pedido?</li>
+        <li>Por favor, ¿ya le resolvieron a la asesora lo del cambio que no le llegó?</li>
+        <li>¿Ya aplicaron las NC a todas las asesoras afectadas por los cambios que no llegaron?</li>
+        <li>¿Cuándo quedan aplicadas las notas crédito de los cambios de la campaña 6?</li>
+        <li>Feliz semana. ¿Qué has sabido de los casos de los cambios? Me están preguntando varias</li>
+        <li>Caso cc 1013682223 — asesora que indica que no recibió el premio de reactivación</li>
+        <li>Me ayudas con el caso de la asesora que devolvió el pedido y no le han aplicado el NC</li>
+        <li>¿A qué hora entregan los pedidos de mi zona hoy?</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- INSCRIPCION -->
+  <div class="card topic-block">
+    <div class="topic-header" onclick="toggleTopic('inscripcion')">
+      <span class="topic-emoji">✅</span>
+      <h3>Estado de inscripción</h3>
+      <span class="topic-count">61 sesiones · Siempre escala a UEC para validar</span>
+      <span class="topic-toggle" id="toggle-inscripcion">▼</span>
+    </div>
+    <div class="topic-examples" id="examples-inscripcion">
+      <ul class="example-list">
+        <li>Me ayudas por favor, tengo 2 procesos de inscripción pendientes con pedido. Cédulas: 52727363 / 1024505971. ¿En qué estado están?</li>
+        <li>Carlos, esta asesora me sale que tiene una inscripción pendiente por firma pero en WhatsApp le sale que no tiene documentos pendientes</li>
+        <li>Hola, ¿me ayudas verificando si esta PPT ya está aprobada? 6142868</li>
+        <li>1090464903 — Aleja me ayudas por fis a gestionar a esta asesora y al codeudor por WhatsApp, la señora es de Venezuela</li>
+        <li>¿Cómo va el proceso de Deisy Ortiz CC 1098803644? ¿Si ya quedó aceptada o ya la llamaron?</li>
+        <li>1117811501 — en el informe me sale rechazado y cuando la vuelvo a hacer me dice que tiene un proceso activo</li>
+        <li>Me puedes ayudar con esta cédula que está realizando el proceso de inscripción pero no le llegó el link para las fotos. Ced 1023923493</li>
+        <li>Ella hizo proceso de inscripción pero le robaron los papeles y tiene contraseña y así no lo recupera</li>
+        <li>CARMEN CECILIA SIERRA RODRIGUEZ 28381161 también se inscribió, ¿por favor qué le falta?</li>
+        <li>1005489205 — me mandaron datos para inscribirla pero el sistema me dice que ya tiene solicitud aceptada y si la busco no la encuentro</li>
+        <li>Loguin Martha Escobar — 1117811501 — en el informe me sale rechazado y cuando la vuelvo a hacer me dice que tiene proceso activo</li>
+        <li>Por favor me ayudas revisando estas vinculaciones que tienen pedido y hoy es el último día para montar pedido</li>
+        <li>Tengo una sra que no pudo realizar un cambio de C5 a tiempo por estar fuera del municipio</li>
+        <li>Me ayudas a activar a esta ase por favor: KELLY JULIETH RIOS VALLEJO 1122342409</li>
+        <li>¿Me puedes ayudar a validar si estas posibles asesoras ya están activas? 1006788751 / 1075249973</li>
+        <li>Por favor dos cositas: el proceso de inscripción de esta AS y también qué le falta al codeudor</li>
+        <li>Listo Alejita, esta inscripción ya quedó. Ojalá me puedas ayudar para esta campaña porque también tiene pedido</li>
+        <li>Me puedes indicar cómo crear un ticket para un caso de inscripción</li>
+        <li>¿Me ayudas a ver en qué estado va el proceso de Yésica Mayerly Castañeda? CC 1123140917</li>
+        <li>Hola Lau, me ayudas revisando el estado de inscripción de la AS 1005176106</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ALIADO UEC -->
+  <div class="card topic-block">
+    <div class="topic-header" onclick="toggleTopic('uec2')">
+      <span class="topic-emoji">🗣️</span>
+      <h3>Contacto directo con Aliado UEC</h3>
+      <span class="topic-count">5.413 sesiones · 71.6% del total</span>
+      <span class="topic-toggle" id="toggle-uec2">▼</span>
+    </div>
+    <div class="topic-examples" id="examples-uec2">
+      <ul class="example-list">
+        <li>Ella quiere abonar 2 millones hoy — ¿cómo sería el proceso con el abono?</li>
+        <li>Edwin, ¿cuándo sale esto? ❌ No fue posible crear el caso de la asesora CARLOS MENDOZA VESGA con documento 91500398 para la marca PCFK</li>
+        <li>Por favor ayúdame con esta asesora que no le llegó el cambio y por CAMI le dijeron que le habían aplicado descuento pero no aparece</li>
+        <li>Sari, ¿qué le falta a ella 1007771074 y a él 1082845234 para quedar listos?</li>
+        <li>Yesii, tengo asesoras de Loguin preocupadas porque el pago es el 11 de mayo — ¿con ellas realizamos acuerdos de pago?</li>
+        <li>Por favor me ayudas a ver si la sra. 66971920 se debe inscribir nuevamente. No puedo ver su estado de cuenta</li>
+        <li>1005489205 — me mandaron datos para inscribirla pero el sistema dice que ya tiene solicitud aceptada</li>
+        <li>Hola mi Naty! Me puedes revisar este proceso a ver qué le falta — EDWIN JOSE URRUCHURTU CC 1047510243</li>
+        <li>Dile a la asesora que haga caso omiso a la información de ese premio de CARRITO MULTIUSO SIN TAPA</li>
+        <li>Hola Lau, muy buenas tardes. Me ayudas revisando el estado de inscripción la AS 1005176106</li>
+        <li>Johana Contreras — Por favor ayúdame con esta asesora que no le llegó el cambio</li>
+        <li>Hola, tengo asesoras de Loguin preocupadas porque el pago es el 11 de mayo</li>
+        <li>Hola mi Dany buenos días — me ayudas a revisar cómo van estas inscripciones: CC 1123140917 / CC 1121818651 / CC 1120864051</li>
+        <li>Carmel Santa Marta Directora Pamela — Sari, ¿qué le falta a ella 1007771074 y a él 1082845234 para quedar listos?</li>
+        <li>No sra, lo envío el lunes. Voy a revisar otras AS que tengo para desbloquear</li>
+        <li>Hola, ¿cuándo salen los pedidos de campaña 8 para mi zona?</li>
+        <li>Mi querida Dany buenos días, me ayudas por favor a gestionar a esta asesora y al codeudor</li>
+        <li>Alexa, está AS puso mal la información del codeudor, ¿tú me puedes ayudar a modificarla o se debe rechazar el proceso?</li>
+        <li>Hola Vanessa, espero estés super bien. Me ayudas porfa revisando qué le hace falta a los procesos de las asesoras con cédula 63360470 y 52796100</li>
+        <li>5779255 buena tarde, ¿me puedes xfa revisar este nombramiento?</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PATRONES -->
+  <div class="card" style="margin-top:0">
+    <h3>Patrones de lenguaje frecuentes en el canal DZ</h3>
+    <table class="pattern-table">
+      <tr><td>"Me ayudas por favor con..."</td><td>Solicitud de gestión — la más común en el canal</td></tr>
+      <tr><td>"Por fa me miras / me revisas..."</td><td>Consulta de estado de un caso o proceso</td></tr>
+      <tr><td>"Tú me puedes / Puedes por favor..."</td><td>Solicitud directa al Aliado UEC por nombre</td></tr>
+      <tr><td>"Tengo una asesora que..."</td><td>Contexto para abrir un caso nuevo</td></tr>
+      <tr><td>"La as CC [número]..."</td><td>Identificación de asesora por cédula</td></tr>
+      <tr><td>"Hola [nombre del Aliado]..."</td><td>Acceso directo al UEC: Pao, Sandrita, Cris, Edwin, Juanca, Yesi...</td></tr>
+      <tr><td>"Esta campaña / c6 / c7 / c8..."</td><td>Referencia a campaña activa o anterior</td></tr>
+      <tr><td>"Inscripción pendiente / proceso activo"</td><td>Estado de vinculación de nueva asesora</td></tr>
+      <tr><td>"[cédula] + [nombre completo]"</td><td>Forma habitual de pasar datos de asesora al aliado</td></tr>
+      <tr><td>Audio .ogg en lugar de texto</td><td>Muy frecuente — el agente debe aceptar ambos formatos</td></tr>
+    </table>
+    <p class="note">Las DZ casi nunca usan el menú estructurado para estas solicitudes — llegan con texto libre mezclando nombre del aliado + cédula + descripción del problema en un solo mensaje.</p>
+  </div>
+</div>
+
+<div class="footer">CAMI DZ — Dashboard de uso &nbsp;·&nbsp; ELEDÉ / Línea Directa &nbsp;·&nbsp; 7.563 sesiones reales (mayo 2026)</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='actividad') initAct();
+}
+function showRank(id, btn) {
+  document.getElementById('top10').style.display = id==='top10' ? 'block' : 'none';
+  document.getElementById('bot10').style.display = id==='bot10' ? 'block' : 'none';
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleTopic(id) {
+  const ex = document.getElementById('examples-' + id);
+  const tog = document.getElementById('toggle-' + id);
+  const isOpen = ex.classList.contains('open');
+  ex.classList.toggle('open', !isOpen);
+  tog.classList.toggle('open', !isOpen);
+}
+
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const gridC = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
+const lblC = '#898781';
+const baseOpts = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{ legend:{ display:false } },
+  scales:{ x:{ ticks:{ color:lblC, font:{size:11} }, grid:{color:gridC} }, y:{ ticks:{ color:lblC, font:{size:11} }, grid:{color:gridC} } }
+};
+
+new Chart(document.getElementById('uecPie'), {
+  type:'doughnut',
+  data:{ labels:['Inscripción/activación','Novedad pedido','Conversación general','Saldo/cupo','Precintos/CyD','Desbloqueo','Premio no recibido','Anular proceso','Pedido no recibido','Clave/acceso','Prod. averiado'], datasets:[{ data:[1870,1730,1532,799,583,567,448,263,235,71,68], backgroundColor:['#2a78d6','#4a3aa7','#73726c','#eda100','#1baf7a','#e34948','#e87ba4','#eb6834','#5b8dd9','#c49a00','#b02828'], borderWidth:0 }] },
+  options:{ responsive:true, maintainAspectRatio:false, cutout:'55%', plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:(c)=>` ${c.label}: ${c.raw.toLocaleString()} (${Math.round(c.raw/7167*100)}%)` } } } }
+});
+
+new Chart(document.getElementById('menuPie'), {
+  type:'doughnut',
+  data:{ labels:['Aliado UEC','Gestión de casos','Bloqueos','Consultar asesoras','Desbloqueos','Gestión directora','Estado inscripción'], datasets:[{ data:[5425,1143,148,142,121,90,61], backgroundColor:['#e34948','#2a78d6','#4a3aa7','#1baf7a','#eda100','#eb6834','#888'], borderWidth:0 }] },
+  options:{ responsive:true, maintainAspectRatio:false, cutout:'55%', plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:(c)=>` ${c.label}: ${c.raw.toLocaleString()} (${Math.round(c.raw/7130*100)}%)` } } } }
+});
+
+let actDone=false;
+function initAct() {
+  if(actDone) return; actDone=true;
+  const days=['1/5','2/5','3/5','4/5','5/5','6/5','7/5','8/5','9/5','10/5','11/5','12/5','13/5','14/5','15/5','16/5','17/5','18/5','19/5','20/5','21/5','22/5','23/5','24/5','25/5','26/5','27/5','28/5','29/5','30/5','31/5'];
+  const dayData=[17,80,7,455,421,380,367,318,86,4,438,358,323,317,255,73,5,14,420,377,367,372,103,2,421,443,391,367,303,62,17];
+  new Chart(document.getElementById('dailyChart'),{ type:'bar', data:{ labels:days, datasets:[{ data:dayData, backgroundColor:'#2a78d6', borderRadius:3, borderSkipped:false }] }, options:{ ...baseOpts, scales:{ x:{ ticks:{ color:lblC, font:{size:9}, maxRotation:45, autoSkip:false }, grid:{display:false} }, y:{ ticks:{ color:lblC, font:{size:11} }, grid:{color:gridC} } } } });
+  new Chart(document.getElementById('hourChart'),{ type:'bar', data:{ labels:['6h','7h','8h','9h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h+'], datasets:[{ data:[30,473,992,1008,910,802,498,370,660,745,636,208,90,122], backgroundColor:'#4a3aa7', borderRadius:3, borderSkipped:false }] }, options:baseOpts });
+  new Chart(document.getElementById('weekChart'),{ type:'bar', data:{ labels:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'], datasets:[{ data:[1328,1642,1471,1418,1265,404,35], backgroundColor:['#2a78d6','#2a78d6','#2a78d6','#2a78d6','#2a78d6','#eda100','#e34948'], borderRadius:3, borderSkipped:false }] }, options:{ ...baseOpts, scales:{ x:{ ticks:{color:lblC,font:{size:11}}, grid:{display:false} }, y:{ ticks:{color:lblC,font:{size:11}}, grid:{color:gridC} } } } });
+}
+</script>
+</body>
+</html>
